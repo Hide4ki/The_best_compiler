@@ -1,0 +1,19 @@
+CC=g++
+CFLAGS=-c -Wall
+
+SOURCES=test_scanner.cpp
+
+OBJECTS=$(SOURCES:.cpp=.o)
+EXECUTABLE=Test_Compiler
+
+	
+all: $(SOURCES) $(EXECUTABLE) clean
+
+clean:
+	rm -f -rf  *.o
+
+$(EXECUTABLE): $(OBJECTS) 
+	$(CC) $(LDFLAGS) $(OBJECTS) -o $@
+
+.cpp.o:
+	$(CC) $(CFLAGS) $< -o $@
