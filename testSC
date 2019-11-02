@@ -3,17 +3,28 @@ CFLAGS=-c -Wall
 
 SOURCES=test_scanner.cpp
 
-OBJECTS=$(SOURCES:.cpp=.o)
-EXECUTABLE=Test_Compiler
+DIRRUN=test
 
-	
+OBJECTS=$(SOURCES:%.cpp=$(DIRRUN)\\%.o)
+EXECUTABLE=$(DIRRUN)\test_scanner
+
 all: $(SOURCES) $(EXECUTABLE) clean
-
-clean:
-	rm -f -rf  *.o
+	echo ####RUN TEST       ####
+	$(DIRRUN)\Compiler
 
 $(EXECUTABLE): $(OBJECTS) 
-	$(CC) $(LDFLAGS) $(OBJECTS) -o $@
+	echo ####LINKING START  ####
+	if not exist $(DIRRUN) mkdir $(DIRRUN)
+	$(CC) $(OBJECTS) -o $@
+	echo ####LINKING DONE   ####
 
-.cpp.o:
+$(DIRRUN)\\%.o: %.cpp
+	echo ####COMPILING START####
+	if not exist $(DIRRUN) mkdir $(DIRRUN)
 	$(CC) $(CFLAGS) $< -o $@
+	echo ####COMPILING DONE ####
+
+clean: 
+	echo ####CLEAN START    ####
+	del $(OBJECTS)
+	echo ####CLEAN DONE     ####

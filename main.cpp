@@ -3,30 +3,34 @@
 #include <string>
 #include "Scanner.h"
 #include <windows.h>
-
+#include "Compiler.h"
+#include "Linker.h"
+#include "Parser.h"
 using namespace std;
 
 int main(void)
 {
-  ifstream list_file_of_source_language("list files for translation");
-  if(!list_file_of_source_language)
+  ifstream listFileOfSourceLanguage("listFiles.txt");
+  if(!listFileOfSourceLanguage)
     return 2;
 
-  ofstream file_of_target_language("translation result");
-  if(!file_of_target_language)
+  ofstream fileOfTargetLanguage("result");
+  if(!fileOfTargetLanguage)
     return 3;
 
-  string file_name;
+  string fileName;
 
-  while(getline(list_file_of_source_language,file_name))
+  while(getline(listFileOfSourceLanguage,fileName))
   {
-    ifstream file_source_language(file_name);
+    ifstream fileSourceLanguage(fileName);
+    if(!fileSourceLanguage)
+      return 4;
     //TODO
-    file_source_language.close();
+    fileSourceLanguage.close();
   }
 
-  list_file_of_source_language.close();
-  file_of_target_language.close();
+  listFileOfSourceLanguage.close();
+  fileOfTargetLanguage.close();
 
   system("pause");
   return 0;

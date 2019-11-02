@@ -3,16 +3,28 @@ CFLAGS=-c -Wall
 
 SOURCES=main.cpp
 
-OBJECTS=$(SOURCES:.cpp=.o)
-EXECUTABLE=Compiler
+DIRRUN=debug
+
+OBJECTS=$(SOURCES:%.cpp=$(DIRRUN)\\%.o)
+EXECUTABLE=$(DIRRUN)\Compiler
 
 all: $(SOURCES) $(EXECUTABLE) clean
-
-clean:
-	rm -f -rf *.o
+	echo ####RUN TASK       ####
+	$(DIRRUN)\Compiler
 
 $(EXECUTABLE): $(OBJECTS) 
-	$(CC) $(LDFLAGS) $(OBJECTS) -o $@
+	echo ####LINKING START  ####
+	if not exist $(DIRRUN) mkdir $(DIRRUN)
+	$(CC) $(OBJECTS) -o $@
+	echo ####LINKING DONE   ####
 
-.cpp.o:
+$(DIRRUN)\\%.o: %.cpp
+	echo ####COMPILING START####
+	if not exist $(DIRRUN) mkdir $(DIRRUN)
 	$(CC) $(CFLAGS) $< -o $@
+	echo ####COMPILING DONE ####
+
+clean: 
+	echo ####CLEAN START    ####
+	del $(OBJECTS)
+	echo ####CLEAN DONE     ####

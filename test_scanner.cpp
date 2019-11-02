@@ -7,7 +7,7 @@ using namespace std;
 
 int main(void)
 {
-  Scanner *test_scanner = new Scanner;
+  Scanner *testScanner = new Scanner;
 
   int cnt;
   int num;
@@ -15,8 +15,8 @@ int main(void)
   bool skip;
   bool allGood = true;
 
-  string test_value;
-  string expected_value;
+  string testValue;
+  string expectedValue;
 
   ifstream fin("test sc #1");
   if(!fin)
@@ -27,13 +27,13 @@ int main(void)
   {
     fin >> num;
     fin >> skip;
-    fin >> test_value;
-    fin >> expected_value;
+    fin >> testValue;
+    fin >> expectedValue;
 
     if(!skip)
     {
       cout << "test #" << num << endl;
-      if(expected_value == test_scanner->processing(test_value))
+      if(expectedValue == testScanner->processing(testValue))
         cout << "YES";
       else
       {
@@ -49,7 +49,7 @@ int main(void)
   else
     cout << "tests is done!" << endl;
   
-  delete test_scanner;
+  delete testScanner;
   system("pause");
   return 0;
 }
