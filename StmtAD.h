@@ -116,12 +116,21 @@ Program<T>* StmtAD<T>::derivation(LexIterator<T>&it, LexIterator<T>&end)
 		}
 		else
 			throw new MyException("Expected:')'", place);
+
+		auto myStmt = new Stmt<T>(_table, this);
+		if (myStmt->derivation(it, end) != EmptyString)
+			Add(myStmt);
+		else
+		{
+			delete myStmt;
+		}
+
 		auto[token, place] = *it;
 		auto[name, attribute] = token.getValue();
 		if (name == TokenName::WORD && attribute == static_cast<int>(ServWord::ENDFOR))
 		{
 			auto child = new TerminalSymbol<T>(_table, this);
-			child->givenName(")");
+			child->givenName("ENDFOR");
 			Add(child);
 			++it;
 		}
@@ -140,16 +149,160 @@ Program<T>* StmtAD<T>::derivation(LexIterator<T>&it, LexIterator<T>&end)
 			throw new MyException("Expected:';'", place);
 	}
 	else if (name == TokenName::WORD && attribute == static_cast<int>(ServWord::WHILE))
-	{
+	{	//while (<orEx>) <stmt> endwhile;
+		auto child = new TerminalSymbol<T>(_table, this);
+		child->givenName("while");
+		Add(child);
+		++it;
 
+		auto[token, place] = *it;
+		auto[name, attribute] = token.getValue();
+
+		if (name == TokenName::DELIM && attribute == static_cast<int>(Delim::RBRACKETS_L))
+		{
+			auto child = new TerminalSymbol<T>(_table, this);
+			child->givenName("(");
+			Add(child);
+			++it;
+		}
+		else
+			throw new MyException("Expected:'('", place);
+
+		auto myOrEx = new OrEx<T>(_table, this);
+		if (myOrEx->derivation(it, end) != EmptyString)
+			Add(myOrEx);
+		else
+		{
+			delete myOrEx;
+			throw new MyException("Expected: condition", place);
+		}
+
+		auto[token, place] = *it;
+		auto[name, attribute] = token.getValue();
+		if (name == TokenName::DELIM && attribute == static_cast<int>(Delim::RBRACKETS_R))
+		{
+			auto child = new TerminalSymbol<T>(_table, this);
+			child->givenName(")");
+			Add(child);
+			++it;
+		}
+		else
+			throw new MyException("Expected:')'", place);
+
+		auto myStmt = new Stmt<T>(_table, this);
+		if (myStmt->derivation(it, end) != EmptyString)
+			Add(myStmt);
+		else
+		{
+			delete myStmt;
+		}
+
+		auto[token, place] = *it;
+		auto[name, attribute] = token.getValue();
+		if (name == TokenName::WORD && attribute == static_cast<int>(ServWord::ENDWHILE))
+		{
+			auto child = new TerminalSymbol<T>(_table, this);
+			child->givenName("endwhile");
+			Add(child);
+			++it;
+		}
+		else
+			throw new MyException("Expected:'endwhile'", place);
+		auto[token, place] = *it;
+		auto[name, attribute] = token.getValue();
+		if (name == TokenName::DELIM && attribute == static_cast<int>(Delim::SEMICOLON))
+		{
+			auto child = new TerminalSymbol<T>(_table, this);
+			child->givenName(";");
+			Add(child);
+			++it;
+		}
+		else
+			throw new MyException("Expected:';'", place);
 	}
 	else if (name == TokenName::WORD && attribute == static_cast<int>(ServWord::IF))
-	{
+	{//if (<orEx>) <stmt> else <stmt> endif; | if (<orEx>) <stmt> endif
+		auto child = new TerminalSymbol<T>(_table, this);
+		child->givenName("if");
+		Add(child);
+		++it;
 
-	}
-	else if (name == TokenName::WORD && attribute == static_cast<int>(ServWord::DO))
-	{
+		auto[token, place] = *it;
+		auto[name, attribute] = token.getValue();
 
+		if (name == TokenName::DELIM && attribute == static_cast<int>(Delim::RBRACKETS_L))
+		{
+			auto child = new TerminalSymbol<T>(_table, this);
+			child->givenName("(");
+			Add(child);
+			++it;
+		}
+		else
+			throw new MyException("Expected:'('", place);
+
+		auto myOrEx = new OrEx<T>(_table, this);
+		if (myOrEx->derivation(it, end) != EmptyString)
+			Add(myOrEx);
+		else
+		{
+			delete myOrEx;
+			throw new MyException("Expected: condition", place);
+		}
+
+		auto[token, place] = *it;
+		auto[name, attribute] = token.getValue();
+		if (name == TokenName::DELIM && attribute == static_cast<int>(Delim::RBRACKETS_R))
+		{
+			auto child = new TerminalSymbol<T>(_table, this);
+			child->givenName(")");
+			Add(child);
+			++it;
+		}
+		else
+			throw new MyException("Expected:')'", place);
+
+		auto myStmt = new Stmt<T>(_table, this);
+		if (myStmt->derivation(it, end) != EmptyString)
+			Add(myStmt);
+		else
+		{
+			delete myStmt;
+		}
+		auto[token, place] = *it;
+		auto[name, attribute] = token.getValue();
+		if (name == TokenName::WORD && attribute == static_cast<int>(ServWord::ELSE))
+		{
+			++it;
+			auto myStmt = new Stmt<T>(_table, this);
+			if (myStmt->derivation(it, end) != EmptyString)
+				Add(myStmt);
+			else
+			{
+				delete myStmt;
+			}
+		}
+		auto[token, place] = *it;
+		auto[name, attribute] = token.getValue();
+		if (name == TokenName::WORD && attribute == static_cast<int>(ServWord::ENDIF))
+		{
+			auto child = new TerminalSymbol<T>(_table, this);
+			child->givenName("endif");
+			Add(child);
+			++it;
+		}
+		else
+			throw new MyException("Expected:'endif'", place);
+		auto[token, place] = *it;
+		auto[name, attribute] = token.getValue();
+		if (name == TokenName::DELIM && attribute == static_cast<int>(Delim::SEMICOLON))
+		{
+			auto child = new TerminalSymbol<T>(_table, this);
+			child->givenName(";");
+			Add(child);
+			++it;
+		}
+		else
+			throw new MyException("Expected:';'", place);
 	}
 	else
 	{
@@ -174,7 +327,8 @@ Program<T>* StmtAD<T>::derivation(LexIterator<T>&it, LexIterator<T>&end)
 				delete myExpr;
 			}
 		}
-
+		auto[token, place] = *it;
+		auto[name, attribute] = token.getValue();
 		if (derivationIdentified)
 			if (name == TokenName::DELIM && attribute == static_cast<int>(Delim::SEMICOLON))
 			{
@@ -190,7 +344,10 @@ Program<T>* StmtAD<T>::derivation(LexIterator<T>&it, LexIterator<T>&end)
 		{
 			auto myBlock = new Block<T>(_table, this);
 			if (myBlock->derivation(it, end) != EmptyString)
+			{
+				derivationIdentified = true;
 				Add(myBlock);
+			}
 			else
 			{
 				derivationIdentified = false;

@@ -5,7 +5,7 @@ TableSymbol::TableSymbol()
 	_tableId = new TableID;
 	_tableDelim = new TableDelim;
 	_tableServWord = new TableServWord;
-	_tableLitteral = new TableLitteral;
+	_tableLitteral = new TableLiterals;
 }
 
 TableSymbol::~TableSymbol()
@@ -31,7 +31,7 @@ const TableServWord &TableSymbol::getTableServWord()const
 	return *_tableServWord;
 }
 
-TableLitteral &TableSymbol::getTableLitteral()
+TableLiterals &TableSymbol::getTableLiterals()
 {
 	return *_tableLitteral;
 }

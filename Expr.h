@@ -29,9 +29,34 @@ Expr<T>::Expr(TableSymbol *table, Program<T> *myParent) :Program<T>{ table,myPar
 	SetName("Expr");
 }
 
-//<block> ::= <decls><stmts>
+//<expr> ::= <assEx>,<expr> | <assEx> | <orEx>, <expr> | <orEx>, 
 template<class T>
 Program<T>* Expr<T>::derivation(LexIterator<T>&it, LexIterator<T>&end)
 {
-	return 0;
+	bool flag = true;
+	auto myAssEx = new AssEx<T>(_table, this);
+	if (myAssEx->derivation(it, end) != EmptyString)
+		Add(myAssEx);
+	else
+	{
+		delete myAssEx;
+		flag = false;
+	}
+	if (!flag)
+	{
+		return 0;
+	}
+
+	auto[token, place] = *it;
+	auto[name, attribute] = token.getValue();
+
+	if ((name == TokenName::DELIM) && (attribute == static_cast<int>(Delim::COMMA)))
+	{
+		auto child = new TerminalSymbol<T>(_table, this);
+		child->givenName(",");
+		Add(child);
+		++it;
+	}
+	this->derivation(it, end);
+	return this;
 }

@@ -24,5 +24,8 @@
 #include "PrimaryEx.h"
 #include "UnaryEx.h"
 #include "Literal.h"
+#include "BoolLiteral.h"
+#include "StringLiteral.h"
+#include "IntegerLiteral.h"
 
 const int EmptyString = 0;

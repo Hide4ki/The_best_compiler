@@ -5,7 +5,7 @@
 #include <string>
 #include <iomanip>
 #include "TableID.h"
-#include "TableLitteral.h"
+#include "TableLiterals.h"
 #include "TableDelim.h"
 #include "TableServWord.h"
 #include "Interpretator.h"
@@ -24,7 +24,7 @@ template <class T>
 class Interpretator;
 
 class TableID;
-class TableLitteral;
+class TableLiterals;
 class TableServWord;
 class TableDelim;
 
@@ -34,14 +34,14 @@ private:
 	TableID *_tableId;
 	TableDelim *_tableDelim;
 	TableServWord *_tableServWord;
-	TableLitteral *_tableLitteral;
+	TableLiterals *_tableLitteral;
 	TableSymbol();
 	~TableSymbol();
 public:
 	TableID &getTableID();
 	const TableDelim &getTableDelim() const;
 	const TableServWord &getTableServWord() const;
-	TableLitteral &getTableLitteral();
+	TableLiterals &getTableLiterals();
 	template <class T>
 	friend class Interpretator;
 };

@@ -34,7 +34,7 @@ int main()
 	//cout << b.getTableDelim() << endl;
 	//cout << b.getTableID() << endl;
 	//cout << b.getTableServWord() << endl;
-	//cout << b.getTableLitteral() << endl;
+	//cout << b.getTableLiterals() << endl;
 	system("pause");
 	return 0;
 }

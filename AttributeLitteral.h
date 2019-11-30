@@ -1,6 +1,6 @@
 #pragma once
 #include <map>
-#include "TableLitteral.h"
+#include "TableLiterals.h"
 
 using namespace std;
 
@@ -15,5 +15,5 @@ public:
 	bool operator==(const AttributeLitteral&)const;
 	pair<Type, int> getAttribute();
 	AttributeLitteral(Type type, int index);
-	friend class TableLitteral;
+	friend class TableLiterals;
 };

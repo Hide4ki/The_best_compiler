@@ -14,7 +14,7 @@ ostream &operator <<(ostream &stream, pair<Token, Place> &myType)
 	case TokenName::ID:
 		nameToken = "identifier";
 		break;
-	case TokenName::LITTER:
+	case TokenName::LITERAL:
 		nameToken = "litteral";
 		break;
 	case TokenName::WORD:

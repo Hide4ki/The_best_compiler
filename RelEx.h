@@ -43,6 +43,8 @@ Program<T>* RelEx<T>::derivation(LexIterator<T>&it, LexIterator<T>&end)
 		delete myAddEx;
 		throw new MyException("Expected:'myAddEx'", place);
 	}
+	auto[token, place] = *it;
+	auto[name, attribute] = token.getValue();
 	if (name == TokenName::DELIM && attribute == static_cast<int>(Delim::LESS_OP))
 	{
 		auto child = new TerminalSymbol<T>(_table, this);
@@ -73,5 +75,5 @@ Program<T>* RelEx<T>::derivation(LexIterator<T>&it, LexIterator<T>&end)
 			throw new MyException("Expected:'AddEx'", place);
 		}
 	}
-	return 0;
+	return this;
 }

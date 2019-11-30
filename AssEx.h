@@ -43,7 +43,7 @@ Program<T>* AssEx<T>::derivation(LexIterator<T>&it, LexIterator<T>&end)
 		Add(child);
 	}
 	else
-		throw new MyException("Expected:ID!", place);
+		return 0;
 
 	auto[token, place] = *it;
 	auto[name, attribute] = token.getValue();

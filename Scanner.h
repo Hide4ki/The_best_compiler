@@ -127,6 +127,11 @@ Scanner<T>& Scanner<T>::nextToken()
 				gc();
 				changeState(State::NUM);
 			}
+			else if (assert('!'))
+			{
+				gc();
+				changeState(State::NEQ);
+			}
 			else if (assert('='))
 			{
 				gc();
@@ -189,7 +194,7 @@ Scanner<T>& Scanner<T>::nextToken()
 			else
 			{
 				backSymb();
-				_token = new Token(TokenName::LITTER, _table->getTableLitteral().putNum(_d));
+				_token = new Token(TokenName::LITERAL, _table->getTableLiterals().putNum(_d));
 				return *this;
 			}
 			break;
@@ -206,7 +211,7 @@ Scanner<T>& Scanner<T>::nextToken()
 			}
 			else
 			{
-				_token = new Token(TokenName::LITTER, _table->getTableLitteral().putStr(_buffer));
+				_token = new Token(TokenName::LITERAL, _table->getTableLiterals().putStr(_buffer));
 				return *this;
 			}
 			break;
@@ -220,7 +225,7 @@ Scanner<T>& Scanner<T>::nextToken()
 			}
 			else
 			{
-				_token = new Token(TokenName::LITTER, _table->getTableLitteral().putStr(_buffer));
+				_token = new Token(TokenName::LITERAL, _table->getTableLiterals().putStr(_buffer));
 				return *this;
 			}
 			break;

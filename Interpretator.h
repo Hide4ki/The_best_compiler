@@ -32,7 +32,7 @@ void Interpretator<T>::execute()
 	cout << _myTableSymbol->getTableDelim() << endl;
 	cout << _myTableSymbol->getTableID() << endl;
 	cout << _myTableSymbol->getTableServWord() << endl;
-	cout << _myTableSymbol->getTableLitteral() << endl;
+	cout << _myTableSymbol->getTableLiterals() << endl;
 }
 
 template<class T>
