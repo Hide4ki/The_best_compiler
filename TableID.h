@@ -22,6 +22,7 @@ public:
 	int putl(string);
 	bool setType(int, Type);
 	bool declare(int);
+	Type getType(int);
 	string getName(int);
 	friend ostream &operator<<(ostream&, const TableID&);
 	friend TableSymbol;
