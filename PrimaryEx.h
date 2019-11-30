@@ -38,6 +38,7 @@ Program<T>* PrimaryEx<T>::derivation(LexIterator<T>&it, LexIterator<T>&end)
 	
 	if (name == TokenName::ID)
 	{
+		checkdecl(attribute,place);
 		++it;
 		auto child = new TerminalSymbol<T>(_table, this);
 		child->givenName(_table->getTableID().getName(attribute));

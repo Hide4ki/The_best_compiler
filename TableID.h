@@ -21,6 +21,7 @@ public:
 	int look(string)const;
 	int putl(string);
 	bool setType(int, Type);
+	bool declare(int);
 	string getName(int);
 	friend ostream &operator<<(ostream&, const TableID&);
 	friend TableSymbol;

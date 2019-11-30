@@ -38,6 +38,7 @@ Program<T>* AssEx<T>::derivation(LexIterator<T>&it, LexIterator<T>&end)
 	if (name == TokenName::ID)
 	{
 		++it;
+		checkdecl(attribute, place);
 		auto child = new TerminalSymbol<T>(_table, this);
 		child->givenName(_table->getTableID().getName(attribute));
 		Add(child);

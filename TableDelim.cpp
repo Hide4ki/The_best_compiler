@@ -44,7 +44,9 @@ ostream & operator<<(ostream &stream, const TableDelim &table)
 	stream << " id|val" << endl;
 	for (auto a : table._picture)
 	{
-		stream << right << setw(3) << ++i << "|" << "\"" <<a << "\"" << endl;
+		if (i !=0)
+		stream << right << setw(3) << i << "|" << "\"" <<a << "\"" << endl;
+		i++;
 	}
 	return stream;
 }

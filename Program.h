@@ -26,6 +26,7 @@ private:
 	Program() = delete;
 protected:
 	void decid(int, Type, Place place);
+	void checkdecl(int, Place place);
 	explicit Program(TableSymbol*, Program<T>* myParent = 0);
 	void SetName(string name) { _name = name; };
 	Program<T>* _parent;
@@ -47,6 +48,13 @@ void Program<T>::decid(int i, Type type, Place place)
 {
 	if (!_table->getTableID().setType(i, type))
 		throw new MyException("Repeated declare!!!", place);
+}
+
+template<class T>
+void Program<T>::checkdecl(int i, Place place)
+{
+	if (!_table->getTableID().declare(i))
+		throw new MyException("Don't declare!!!", place);
 }
 
 template<class T>

@@ -22,6 +22,15 @@ int TableID::putl(string name)
 	return i;
 }
 
+bool TableID::declare(int i)
+{
+	return _body.at(i)._decl;
+}
+Type TableID::getType(int i)
+{
+	return _body.at(i)._type;
+}
+
 bool TableID::setType(int i, Type type)
 {
 	if (!_body.at(i)._decl)

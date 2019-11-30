@@ -39,7 +39,9 @@ ostream & operator<<(ostream &stream, const TableServWord &table)
 	stream << " id|val" << endl;
 	for (auto a : table._words)
 	{
-		stream << right << setw(3) << ++i << "|" << "\"" << a << "\"" << endl;
+		if (i != 0)
+			stream << right << setw(3) << i << "|" << "\"" << a << "\"" << endl;
+		i++;
 	}
 	return stream;
 }
