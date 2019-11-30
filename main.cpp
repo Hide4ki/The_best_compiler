@@ -1,37 +1,40 @@
 #include <iostream>
+#include <iterator>
 #include <fstream>
-#include <string>
 #include "Scanner.h"
-#include <windows.h>
-#include "Compiler.h"
-#include "Linker.h"
-#include "Parser.h"
+#include "TableDelim.h"
+#include "operator.h"
+
 using namespace std;
 
-int main(void)
+int main()
 {
-  ifstream listFileOfSourceLanguage("listFiles.txt");
-  if(!listFileOfSourceLanguage)
-    return 2;
+	ifstream fin("test.txt");
 
-  ofstream fileOfTargetLanguage("result");
-  if(!fileOfTargetLanguage)
-    return 3;
+	if (!fin)
+		return 1;
 
-  string fileName;
+	auto myInterpretator = new Interpretator<istreambuf_iterator<char>>(istreambuf_iterator<char>(fin), istreambuf_iterator<char>{});
 
-  while(getline(listFileOfSourceLanguage,fileName))
-  {
-    ifstream fileSourceLanguage(fileName);
-    if(!fileSourceLanguage)
-      return 4;
-    //TODO
-    fileSourceLanguage.close();
-  }
+	myInterpretator->execute();
 
-  listFileOfSourceLanguage.close();
-  fileOfTargetLanguage.close();
+	//istreambuf_iterator<char>(fin), istreambuf_iterator<char>());
 
-  system("pause");
-  return 0;
+	//try
+	//{
+	//	++a;
+	//	for (; a != c; ++a)
+	//		cout << *a << endl;
+	//}
+	//catch (MyException *e)
+	//{
+	//	cout << e->what() << endl;
+	//	delete e;
+	//}
+	//cout << b.getTableDelim() << endl;
+	//cout << b.getTableID() << endl;
+	//cout << b.getTableServWord() << endl;
+	//cout << b.getTableLitteral() << endl;
+	system("pause");
+	return 0;
 }
