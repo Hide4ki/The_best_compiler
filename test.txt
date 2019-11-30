@@ -1,0 +1,23 @@
+PROGRAMM;
+  integer x;
+  bool k;
+  integer z;
+  string y;//integer w;
+  integer a;
+  bool b;
+  y = "Hello World";
+  {
+    integer e;
+    e = 44;
+    while(e<55) endwhile;
+  } 
+  if (a == 1) b = 3;  endif;
+  for(;x != 3;)endfor;
+  y = 'q';
+  while(x<3)y = 'q';endwhile;
+  integer d;
+  /*intger r*/bool k2;
+  for(x = 5; x<11; x = x + 1)
+  z=z+x;
+  endfor;
+END;
