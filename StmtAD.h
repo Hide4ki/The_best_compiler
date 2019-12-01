@@ -29,7 +29,7 @@ StmtAD<T>::StmtAD(TableSymbol *table, Program<T> *myParent) :Program<T>{ table,m
 	SetName("StmtAD");
 }
 
-//<stmtAD> ::= <assEx>; | <block> | for(<assEx>; <orEx>; <expr>) <stmt>  endfor; | <expr>; | while(<orEx>) <stmt> endwhile; | do <stmt> while(<orEx>); | if (<orEx>) <stmt> else <stmt> endif; | if (<orEx>) <stmt> endif | ℰ;
+//<stmtAD> ::= <assEx>; | <block> | for(<assEx>; <orEx>; <expr>) <stmt>  endfor; | <expr>; | while(<orEx>) <stmt> endwhile; | if (<orEx>) <stmt> else <stmt> endif; | if (<orEx>) <stmt> endif | ℰ;
 template<class T>
 Program<T>* StmtAD<T>::derivation(LexIterator<T>&it, LexIterator<T>&end)
 {

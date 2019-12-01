@@ -1,16 +1,16 @@
 #pragma once
 #include "TableSymbol.h"
-#include "AttributeLitteral.h"
+#include "AttributeLiteral.h"
 
 using namespace std;
 
 class TableSymbol;
-class AttributeLitteral;
+class AttributeLiteral;
 
 class TableLiterals
 {
 private:
-	vector<AttributeLitteral> _body;
+	vector<AttributeLiteral> _body;
 	vector<string> _strs;
 	vector<bool> _bools;
 	vector<int> _nums;

@@ -3,7 +3,7 @@
 int TableLiterals::putNum(int value)
 {
 	auto a = _body.size();
-	_body.push_back(AttributeLitteral(Type::INTEGER, _nums.size()));
+	_body.push_back(AttributeLiteral(Type::INTEGER, _nums.size()));
 	_nums.push_back(value);
 	return a + 1;
 }
@@ -11,7 +11,7 @@ int TableLiterals::putNum(int value)
 int TableLiterals::putStr(string value)
 {
 	auto a = _body.size();
-	_body.push_back(AttributeLitteral(Type::STRING, _strs.size()));
+	_body.push_back(AttributeLiteral(Type::STRING, _strs.size()));
 	_strs.push_back(value);
 	return a + 1;
 }
@@ -19,7 +19,7 @@ int TableLiterals::putStr(string value)
 int TableLiterals::putBool(bool value)
 {
 	auto a = _body.size();
-	_body.push_back(AttributeLitteral(Type::BOOL, _bools.size()));
+	_body.push_back(AttributeLiteral(Type::BOOL, _bools.size()));
 	_bools.push_back(value);
 	return a + 1;
 }

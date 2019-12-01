@@ -6,14 +6,14 @@ using namespace std;
 
 enum class Type;
 
-class AttributeLitteral
+class AttributeLiteral
 {
 	Type _type;
 	int _index;
-	AttributeLitteral() = default;
+	AttributeLiteral() = default;
 public:
-	bool operator==(const AttributeLitteral&)const;
+	bool operator==(const AttributeLiteral&)const;
 	pair<Type, int> getAttribute();
-	AttributeLitteral(Type type, int index);
+	AttributeLiteral(Type type, int index);
 	friend class TableLiterals;
 };
