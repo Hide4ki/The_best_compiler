@@ -84,7 +84,7 @@ Program<T>* StmtAD<T>::derivation(LexIterator<T>&it, LexIterator<T>&end)
 			delete myOrEx;
 			throw new MyException("Expected: condition", place);
 		}
-
+		eqbool(place);
 		auto[token, place] = *it;
 		auto[name, attribute] = token.getValue();
 		if (name == TokenName::DELIM && attribute == static_cast<int>(Delim::SEMICOLON))
@@ -177,6 +177,8 @@ Program<T>* StmtAD<T>::derivation(LexIterator<T>&it, LexIterator<T>&end)
 			throw new MyException("Expected: condition", place);
 		}
 
+		eqbool(place);
+
 		auto[token, place] = *it;
 		auto[name, attribute] = token.getValue();
 		if (name == TokenName::DELIM && attribute == static_cast<int>(Delim::RBRACKETS_R))
@@ -248,6 +250,7 @@ Program<T>* StmtAD<T>::derivation(LexIterator<T>&it, LexIterator<T>&end)
 			delete myOrEx;
 			throw new MyException("Expected: condition", place);
 		}
+		eqbool(place);
 
 		auto[token, place] = *it;
 		auto[name, attribute] = token.getValue();

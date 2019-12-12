@@ -37,6 +37,7 @@ Program<T>* StringLiteral<T>::derivation(LexIterator<T>&it, LexIterator<T>&end)
 	auto child = new TerminalSymbol<T>(_table, this);
 	child->givenName(_table->getTableLiterals().getStr(attribute));
 	Add(child);
+	spush(ExtraType::STR);
 	++it;
 	return this;
 }

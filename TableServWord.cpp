@@ -5,7 +5,6 @@ TableServWord::TableServWord()
 	_words.reserve(numberServWord);
 	_words.resize(numberServWord);
 	_words[static_cast<int>(ServWord::BOOL)] = "bool";
-	_words[static_cast<int>(ServWord::DO)] = "do";
 	_words[static_cast<int>(ServWord::ELSE)] = "else";
 	_words[static_cast<int>(ServWord::END)] = "END";
 	_words[static_cast<int>(ServWord::ENDFOR)] = "endfor";

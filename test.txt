@@ -1,7 +1,7 @@
 PROGRAMM;
   integer x;
   bool k;
-  integer z;
+  bool z;
   string y;//integer w;
   integer a;
   bool b;
@@ -11,13 +11,14 @@ PROGRAMM;
     e = 44;
     while(e<55) endwhile;
   } 
-  if (a == 1) b = 3;  endif;
+  if (a == 1) b = true;  endif;
   for(;x != 3;)endfor;
   y = 'q';
   while(x<3)y = 'q';endwhile;
   integer d;
   /*intger r*/bool k2;
   for(x = 5; x<11; x = x + 1)
-  z=z+x;
+  integer l;
+  z =-l++*34/32+x>58 != true && x > 45 || false;
   endfor;
 END;

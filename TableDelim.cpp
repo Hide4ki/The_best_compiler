@@ -13,6 +13,7 @@ TableDelim::TableDelim()
 	_picture[static_cast<int>(Delim::EQ_OP)] = "==";
 	_picture[static_cast<int>(Delim::INC_OP)] = "++";
 	_picture[static_cast<int>(Delim::LARGE_OP)] = ">";
+	_picture[static_cast<int>(Delim::NOT_OP)] = "!";
 	_picture[static_cast<int>(Delim::LESS_OP)] = "<";
 	_picture[static_cast<int>(Delim::MUL_OP)] = "*";
 	_picture[static_cast<int>(Delim::NEG_OP)] = "-";

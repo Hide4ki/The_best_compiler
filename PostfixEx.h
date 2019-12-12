@@ -13,7 +13,7 @@ template <class T>
 class Program;
 
 template <class T>
-class PostfixEx : public Program<T>
+class PostfixEx : public OrEx<T>
 {
 private:
 	PostfixEx() = delete;
@@ -24,7 +24,7 @@ public:
 };
 
 template<class T>
-PostfixEx<T>::PostfixEx(TableSymbol *table, Program<T> *myParent) :Program<T>{ table,myParent }
+PostfixEx<T>::PostfixEx(TableSymbol *table, Program<T> *myParent) :OrEx<T>{ table,myParent }
 {
 	SetName("PostfixEx");
 }
@@ -41,10 +41,13 @@ Program<T>* PostfixEx<T>::derivation(LexIterator<T>&it, LexIterator<T>&end)
 		Add(myPrimaryEx);
 	}
 
+	auto[token, place] = *it;
+	auto[name, attribute] = token.getValue();
 	if ((name == TokenName::DELIM) && (attribute == static_cast<int>(Delim::INC_OP)))
 	{
 		auto child = new TerminalSymbol<T>(_table, this);
 		child->givenName("++");
+		checkunary(place);
 		Add(child);
 		++it;
 	}

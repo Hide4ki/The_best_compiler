@@ -37,11 +37,12 @@ Program<T>* BoolLiteral<T>::derivation(LexIterator<T>&it, LexIterator<T>&end)
 	auto child = new TerminalSymbol<T>(_table, this);
 	if(name == TokenName::WORD && attribute == static_cast<int>(ServWord::FALSE))
 		child->givenName("false");
-	else if (name == TokenName::WORD && attribute == static_cast<int>(ServWord::FALSE))
+	else if (name == TokenName::WORD && attribute == static_cast<int>(ServWord::TRUE))
 		child->givenName("true");
 	else 
 		throw new MyException("Expected:'true / false'", place);
 	Add(child);
+	spush(ExtraType::BOOL);
 	++it;
 	return this;
 }

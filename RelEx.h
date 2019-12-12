@@ -13,7 +13,7 @@ template <class T>
 class Program;
 
 template <class T>
-class RelEx : public Program<T>
+class RelEx : public OrEx<T>
 {
 private:
 	RelEx() = delete;
@@ -24,7 +24,7 @@ public:
 };
 
 template<class T>
-RelEx<T>::RelEx(TableSymbol *table, Program<T> *myParent) :Program<T>{ table,myParent }
+RelEx<T>::RelEx(TableSymbol *table, Program<T> *myParent) :OrEx<T>{ table,myParent }
 {
 	SetName("RelEx");
 }
@@ -49,6 +49,7 @@ Program<T>* RelEx<T>::derivation(LexIterator<T>&it, LexIterator<T>&end)
 	{
 		auto child = new TerminalSymbol<T>(_table, this);
 		child->givenName("<");
+		spush(ExtraType::LESS_OP);
 		Add(child);
 		++it;
 		auto myAddEx = new AddEx<T>(_table, this);
@@ -59,11 +60,13 @@ Program<T>* RelEx<T>::derivation(LexIterator<T>&it, LexIterator<T>&end)
 			delete myAddEx;
 			throw new MyException("Expected:'AddEx'", place);
 		}
+		checkop(place);
 	}
 	else if (name == TokenName::DELIM && attribute == static_cast<int>(Delim::LARGE_OP))
 	{
 		auto child = new TerminalSymbol<T>(_table, this);
 		child->givenName(">");
+		spush(ExtraType::LARGE_OP);
 		Add(child);
 		++it;
 		auto myAddEx = new AddEx<T>(_table, this);
@@ -74,6 +77,7 @@ Program<T>* RelEx<T>::derivation(LexIterator<T>&it, LexIterator<T>&end)
 			delete myAddEx;
 			throw new MyException("Expected:'AddEx'", place);
 		}
+		checkop(place);
 	}
 	return this;
 }

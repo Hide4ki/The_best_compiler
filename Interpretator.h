@@ -24,7 +24,16 @@ public:
 template<class T>
 void Interpretator<T>::execute()
 {
-	_myParser->getProgram();
+	auto syntaxTree = _myParser->getProgram();
+	ofstream graph("graphs.dot");
+	if (!graph)
+		return;
+	graph << "digraph A" << endl;
+	graph << "{" << endl;
+	syntaxTree->PrintTree(graph);
+	graph << "}" << endl;
+	graph.close();
+	system("graphviz-2.38\\bin\\dot -Tpng graphs.dot -o graphs.png");
 	//_myProgram = _myParser->getProgram();
 	//_myProgram = _myOptimizer(_myProgram->begin(), _myProgram->end());
 	//_myCode = _myGeneratorCode(_myProgram->begin(), _myProgram->end());

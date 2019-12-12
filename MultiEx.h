@@ -13,7 +13,7 @@ template <class T>
 class Program;
 
 template <class T>
-class MultiEx : public Program<T>
+class MultiEx : public OrEx<T>
 {
 private:
 	MultiEx() = delete;
@@ -24,7 +24,7 @@ public:
 };
 
 template<class T>
-MultiEx<T>::MultiEx(TableSymbol *table, Program<T> *myParent) :Program<T>{ table,myParent }
+MultiEx<T>::MultiEx(TableSymbol *table, Program<T> *myParent) :OrEx<T>{ table,myParent }
 {
 	SetName("MultiEx");
 }
@@ -43,12 +43,20 @@ Program<T>* MultiEx<T>::derivation(LexIterator<T>&it, LexIterator<T>&end)
 		delete myUnaryEx;
 		throw new MyException("Expected:'unaryEx'", place);
 	}
+	bool finish = false;
 	auto myMultiExAD = new MultiExAD<T>(_table, this);
-	if (myMultiExAD->derivation(it, end) != EmptyString)
-		Add(myMultiExAD);
-	else
+	while (!finish)
 	{
-		delete myMultiExAD;
+		if (myMultiExAD->derivation(it, end) != EmptyString)
+		{
+			Add(myMultiExAD);
+			myMultiExAD = new MultiExAD<T>(_table, this);
+		}
+		else
+		{
+			delete myMultiExAD;
+			finish = true;
+		}
 	}
 	return this;
 }

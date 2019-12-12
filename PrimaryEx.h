@@ -13,7 +13,7 @@ template <class T>
 class Program;
 
 template <class T>
-class PrimaryEx : public Program<T>
+class PrimaryEx : public OrEx<T>
 {
 private:
 	PrimaryEx() = delete;
@@ -24,7 +24,7 @@ public:
 };
 
 template<class T>
-PrimaryEx<T>::PrimaryEx(TableSymbol *table, Program<T> *myParent) :Program<T>{ table,myParent }
+PrimaryEx<T>::PrimaryEx(TableSymbol *table, Program<T> *myParent) :OrEx<T>{ table,myParent }
 {
 	SetName("PrimaryEx");
 }

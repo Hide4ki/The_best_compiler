@@ -55,24 +55,15 @@ void Parser<T>::SetTable(TableSymbol *table)
 template<class T>
 Program<T> * Parser<T>::getProgram()
 {
-	//try
-	//{
-	//	for (; _it != _end; ++_it)
-	//		cout << *_it << endl;
-	//}
-	//catch (MyException *e)
-	//{
-	//	cout << e->what() << endl;
-	//	delete e;
-	//}
+	auto myProgram = new Program<T>(_table);
 	try
 	{
-		return (new Program<T>(_table))->derivation(_it, _end);
+		myProgram->derivation(_it, _end);
 	}
 	catch (MyException *e)
 	{
 		cout << e->what() << endl;
 		delete e;
-		return 0;
 	}
+	return myProgram;
 }

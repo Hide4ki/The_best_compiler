@@ -13,7 +13,7 @@ template <class T>
 class Program;
 
 template <class T>
-class EqualExAD : public Program<T>
+class EqualExAD : public OrEx<T>
 {
 private:
 	EqualExAD() = delete;
@@ -24,7 +24,7 @@ public:
 };
 
 template<class T>
-EqualExAD<T>::EqualExAD(TableSymbol *table, Program<T> *myParent) :Program<T>{ table,myParent }
+EqualExAD<T>::EqualExAD(TableSymbol *table, Program<T> *myParent) :OrEx<T>{ table,myParent }
 {
 	SetName("EqualExAD");
 }
@@ -39,6 +39,7 @@ Program<T>* EqualExAD<T>::derivation(LexIterator<T>&it, LexIterator<T>&end)
 	{
 		auto child = new TerminalSymbol<T>(_table, this);
 		child->givenName("==");
+		spush(ExtraType::EQ_OP);
 		Add(child);
 		++it;
 	}
@@ -46,6 +47,7 @@ Program<T>* EqualExAD<T>::derivation(LexIterator<T>&it, LexIterator<T>&end)
 	{
 		auto child = new TerminalSymbol<T>(_table, this);
 		child->givenName("!=");
+		spush(ExtraType::NOTEQ_OP);
 		Add(child);
 		++it;
 	}
@@ -60,6 +62,6 @@ Program<T>* EqualExAD<T>::derivation(LexIterator<T>&it, LexIterator<T>&end)
 		delete myRelEx;
 		throw new MyException("Expected:'RelEx'", place);
 	}
-	this->derivation(it, end);
+	checkop(place);
 	return this;
 }

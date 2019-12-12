@@ -10,10 +10,10 @@ template <class T>
 class LexIterator;
 
 template <class T>
-class Program;
+class OrEx;
 
 template <class T>
-class AssEx : public Program<T>
+class AssEx : public OrEx<T>
 {
 private:
 	AssEx() = delete;
@@ -24,7 +24,7 @@ public:
 };
 
 template<class T>
-AssEx<T>::AssEx(TableSymbol *table, Program<T> *myParent) :Program<T>{ table,myParent }
+AssEx<T>::AssEx(TableSymbol *table, Program<T> *myParent) :OrEx<T>{ table,myParent }
 {
 	SetName("AssEx");
 }
@@ -66,5 +66,6 @@ Program<T>* AssEx<T>::derivation(LexIterator<T>&it, LexIterator<T>&end)
 		delete myOrEx;
 		throw new MyException("Expected: r-value", place);
 	}
+	eqtype(place);
 	return this;
 }

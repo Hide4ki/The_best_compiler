@@ -13,7 +13,7 @@ template <class T>
 class Program;
 
 template <class T>
-class AddExAD : public Program<T>
+class AddExAD : public OrEx<T>
 {
 private:
 	AddExAD() = delete;
@@ -24,7 +24,7 @@ public:
 };
 
 template<class T>
-AddExAD<T>::AddExAD(TableSymbol *table, Program<T> *myParent) :Program<T>{ table,myParent }
+AddExAD<T>::AddExAD(TableSymbol *table, Program<T> *myParent) :OrEx<T>{ table,myParent }
 {
 	SetName("AddExAD");
 }
@@ -38,6 +38,7 @@ Program<T>* AddExAD<T>::derivation(LexIterator<T>&it, LexIterator<T>&end)
 	if (name == TokenName::DELIM && attribute == static_cast<int>(Delim::ADD_OP))
 	{
 		auto child = new TerminalSymbol<T>(_table, this);
+		spush(ExtraType::ADD_OP);
 		child->givenName("+");
 		Add(child);
 		++it;
@@ -46,6 +47,7 @@ Program<T>* AddExAD<T>::derivation(LexIterator<T>&it, LexIterator<T>&end)
 	{
 		auto child = new TerminalSymbol<T>(_table, this);
 		child->givenName("-");
+		spush(ExtraType::NEG_OP);
 		Add(child);
 		++it;
 	}
@@ -60,6 +62,6 @@ Program<T>* AddExAD<T>::derivation(LexIterator<T>&it, LexIterator<T>&end)
 		delete myMultiEx;
 		throw new MyException("Expected:'MultiEx'", place);
 	}
-	this->derivation(it, end);
+	checkop(place);
 	return this;
 }

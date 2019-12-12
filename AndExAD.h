@@ -13,7 +13,7 @@ template <class T>
 class Program;
 
 template <class T>
-class AndExAD : public Program<T>
+class AndExAD : public OrEx<T>
 {
 private:
 	AndExAD() = delete;
@@ -24,7 +24,7 @@ public:
 };
 
 template<class T>
-AndExAD<T>::AndExAD(TableSymbol *table, Program<T> *myParent) :Program<T>{ table,myParent }
+AndExAD<T>::AndExAD(TableSymbol *table, Program<T> *myParent) :OrEx<T>{ table,myParent }
 {
 	SetName("AndExAD");
 }
@@ -39,6 +39,7 @@ Program<T>* AndExAD<T>::derivation(LexIterator<T>&it, LexIterator<T>&end)
 	{
 		auto child = new TerminalSymbol<T>(_table, this);
 		child->givenName("&&");
+		spush(ExtraType::AND_OP);
 		Add(child);
 		++it;
 	}
@@ -53,6 +54,6 @@ Program<T>* AndExAD<T>::derivation(LexIterator<T>&it, LexIterator<T>&end)
 		delete myEqualEx;
 		throw new MyException("Expected:'EqualEx'", place);
 	}
-	this->derivation(it, end);
+	checkop(place);
 	return this;
 }

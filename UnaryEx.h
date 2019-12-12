@@ -13,7 +13,7 @@ template <class T>
 class Program;
 
 template <class T>
-class UnaryEx : public Program<T>
+class UnaryEx : public OrEx<T>
 {
 private:
 	UnaryEx() = delete;
@@ -24,7 +24,7 @@ public:
 };
 
 template<class T>
-UnaryEx<T>::UnaryEx(TableSymbol *table, Program<T> *myParent) :Program<T>{ table,myParent }
+UnaryEx<T>::UnaryEx(TableSymbol *table, Program<T> *myParent) :OrEx<T>{ table,myParent }
 {
 	SetName("UnaryEx");
 }
@@ -41,18 +41,29 @@ Program<T>* UnaryEx<T>::derivation(LexIterator<T>&it, LexIterator<T>&end)
 		child->givenName("-");
 		Add(child);
 		++it;
-	} 
+	} 	
+	else if ((name == TokenName::DELIM) && (attribute == static_cast<int>(Delim::NOT_OP)))
+	{
+		auto child = new TerminalSymbol<T>(_table, this);
+		child->givenName("!");
+		Add(child);
+		++it; 
+	}
 	else if ((name == TokenName::DELIM) && (attribute == static_cast<int>(Delim::INC_OP)))
 	{
 		auto child = new TerminalSymbol<T>(_table, this);
 		child->givenName("++");
 		Add(child);
-		++it;
+		++it; 
 	}
 	auto myPostfixEx = new PostfixEx<T>(_table, this);
 	if (myPostfixEx->derivation(it, end) != EmptyString)
 	{
 		Add(myPostfixEx);
 	}
+	if (attribute == static_cast<int>(Delim::NOT_OP))
+		checknot(place);
+	if (attribute == static_cast<int>(Delim::INC_OP) || attribute == static_cast<int>(Delim::NEG_OP))
+		checkunary(place);
 	return this;
 }

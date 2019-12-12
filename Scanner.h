@@ -137,6 +137,11 @@ Scanner<T>& Scanner<T>::nextToken()
 				gc();
 				changeState(State::ASS);
 			}
+			else if (assert('&'))
+			{
+				gc();
+				changeState(State::AND);
+			}
 			else if (assert('|'))
 			{
 				gc();
@@ -242,6 +247,7 @@ Scanner<T>& Scanner<T>::nextToken()
 				return *this;
 			}
 			break;
+
 		case State::OR:
 			if (assert('|'))
 			{
@@ -301,6 +307,12 @@ Scanner<T>& Scanner<T>::nextToken()
 			{
 				gc();
 				changeState(State::COM);
+			}
+			else
+			{
+				backSymb();
+				_token = new Token(TokenName::DELIM, static_cast<int>(Delim::DIV_OP) + 1);
+				return *this;
 			}
 			break;
 		case State::COM:

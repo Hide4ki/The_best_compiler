@@ -37,6 +37,7 @@ Program<T>* IntegerLiteral<T>::derivation(LexIterator<T>&it, LexIterator<T>&end)
 	auto child = new TerminalSymbol<T>(_table, this);
 	child->givenName(to_string(_table->getTableLiterals().getNum(attribute)));
 	Add(child);
+	spush(ExtraType::INT);
 	++it;
 	return this;
 }
