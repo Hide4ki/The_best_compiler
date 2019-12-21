@@ -21,7 +21,6 @@ public:
 	Interpretator(T, T);
 	~Interpretator();
 };
-enum class Oper {OR, AND, EQ, NOTEQ, ASS, LARGE, LESS, INC, ADD, DIV, MUL, NOT, NEG};
 
 template<class T>
 void Interpretator<T>::execute()
@@ -30,6 +29,8 @@ void Interpretator<T>::execute()
 	auto tree = _myParser->getSyntaxTree();
 	/*SyntaxTreeIterator<T> it{ tree };
 	SyntaxTreeIterator<T> end{};*/
+	if (tree == 0)
+		return;
 	vector<Token> polis{ tree->GeneratePolis() };
 	stack<int> st;
 	auto push = [&](int a) { st.push(a); }; 
@@ -38,23 +39,38 @@ void Interpretator<T>::execute()
 	function<int(void)> ipop{pop};
 	auto GetNum = [&](int a) {return _myTableSymbol->getTableLiterals().getNum(a); };
 	auto GetVal = [&](int a) {return _myTableSymbol->getTableID().getValue(a); };
-	int i;
-	map < int, void(*)(function<void(int)>, function<int(void)>)>ops
-	{
-		{static_cast<int>(Oper::ADD), [](function<void(int)> push, function<int(void)> pop) {push(pop() + pop()); }},
-		{static_cast<int>(Oper::NEG), [](function<void(int)> push, function<int(void)> pop) {push(pop() - pop()); }},
-		{static_cast<int>(Oper::MUL), [](function<void(int)> push, function<int(void)> pop) {push(pop() * pop()); }},
-		{static_cast<int>(Oper::DIV), [](function<void(int)> push, function<int(void)> pop) {push(pop() / pop()); }},
-	};
 	
+	map < int, void(*)(function<void(int)>, function<int(void)>, TableSymbol*, int&)>ops
+	{
+		{ static_cast<int>(ExtraType::ASS_OP), [](function<void(int)> push, function<int(void)> pop, TableSymbol *table, int &r) { int b = pop(); int a = pop(); table->getTableID().setValue(a,b); } },
+		{ static_cast<int>(ExtraType::GOTO_OP), [](function<void(int)> push, function<int(void)> pop, TableSymbol *table, int &r) { int i = pop(); r = i - 1; } },
+		{ static_cast<int>(ExtraType::IFGOTO_OP), [](function<void(int)> push, function<int(void)> pop, TableSymbol *table, int &r) { int i = pop(); int arg = pop(); if (!arg) { r = i - 1; } }},
+		{ static_cast<int>(ExtraType::INC_OP), [](function<void(int)> push, function<int(void)> pop, TableSymbol *table, int &r) { int a = pop(); int b = table->getTableID().getValue(a); table->getTableID().setValue(a,++b); push(b); } },
+		{ static_cast<int>(ExtraType::WRITE_OP), [](function<void(int)> push, function<int(void)> pop, TableSymbol *table, int &r) { cout << pop() << endl; } },
+		{ static_cast<int>(ExtraType::READ_OP), [](function<void(int)> push, function<int(void)> pop,TableSymbol *table, int &r) { int a; cin >> a;	table->getTableID().setValue(pop(), a); } },
+		{ static_cast<int>(ExtraType::OR_OP), [](function<void(int)> push, function<int(void)> pop,TableSymbol *table, int &r) {int a = pop(); int b = pop(); push(b || a); } },
+		{ static_cast<int>(ExtraType::AND_OP), [](function<void(int)> push, function<int(void)> pop,TableSymbol *table, int &r) {int a = pop(); int b = pop(); push(b && a); }},
+		{ static_cast<int>(ExtraType::EQ_OP), [](function<void(int)> push, function<int(void)> pop,TableSymbol *table, int &r) {int a = pop(); int b = pop(); push(b == a); }},
+		{ static_cast<int>(ExtraType::NEG_OP), [](function<void(int)> push, function<int(void)> pop,TableSymbol *table, int &r) {int a = pop(); int b = pop(); push(b - a); }},
+		{ static_cast<int>(ExtraType::NEGU_OP), [](function<void(int)> push, function<int(void)> pop,TableSymbol *table, int &r) {push(-pop()); } },
+		{static_cast<int>(ExtraType::NOTEQ_OP), [](function<void(int)> push, function<int(void)> pop,TableSymbol *table, int &r) {int a = pop(); int b = pop(); push(b != a); }},
+		{ static_cast<int>(ExtraType::LARGE_OP), [](function<void(int)> push, function<int(void)> pop,TableSymbol *table, int &r) {int a = pop(); int b = pop(); push(b > a); }},
+		{static_cast<int>(ExtraType::LESS_OP), [](function<void(int)> push, function<int(void)> pop,TableSymbol *table, int &r) {int a = pop(); int b = pop(); push(b < a); }},
+		{static_cast<int>(ExtraType::NOT_OP), [](function<void(int)> push, function<int(void)> pop,TableSymbol *table, int &r) {push(!pop()); }},
+		{static_cast<int>(ExtraType::MUL_OP), [](function<void(int)> push, function<int(void)> pop,TableSymbol *table, int &r) {int a = pop(); int b = pop(); push(b * a); }},
+		{static_cast<int>(ExtraType::DIV_OP), [](function<void(int)> push, function<int(void)> pop ,TableSymbol *table, int &r) {int a = pop(); int b = pop(); push(b / a); }},
+		{static_cast<int>(ExtraType::ADD_OP), [](function<void(int)> push, function<int(void)> pop ,TableSymbol *table, int &r) {int a = pop(); int b = pop(); push(b + a); }},
+	};
+	int i;// ASS_OP, , GOTO_OP
 	for (i = 0; i < polis.size(); i++)
 	{
+		int l;
 		auto token = polis[i];
 		auto[tokenName, att] = token.getValue();
 		switch (tokenName)
 		{
 		case TokenName::NULLTOKEN:
-			ipush(att);
+			ipush(att + 1);
 			break;
 		case TokenName::WORD:
 			if (att == static_cast<int>(ServWord::TRUE))
@@ -63,7 +79,9 @@ void Interpretator<T>::execute()
 				ipush(0);
 			break; //OR_OP, AND_OP, EQ_OP, NOTEQ_OP, ASS_OP, LARGE_OP, LESS_OP, INC_OP, ADD_OP, DIV_OP, MUL_OP, NOT_OP, NEG_OP,
 		case TokenName::DELIM:
-			ops.at(att)(ipush, ipop);
+			l = i;
+			ops.at(att+1)(ipush, ipop, _myTableSymbol, l);
+			i = l;
 			break;
 		case TokenName::LITERAL:
 			ipush(GetNum(att));
@@ -74,16 +92,18 @@ void Interpretator<T>::execute()
 		case TokenName::ADDRESS:
 			ipush(att);
 			break;
+		case TokenName::END:
+			break;
 		}
 	}
 	//_myProgram = _myParser->getProgram();
 	//_myProgram = _myOptimizer(_myProgram->begin(), _myProgram->end());
 	//_myCode = _myGeneratorCode(_myProgram->begin(), _myProgram->end());
 	//_myCode->execute();
-	cout << _myTableSymbol->getTableDelim() << endl;
-	cout << _myTableSymbol->getTableID() << endl;
-	cout << _myTableSymbol->getTableServWord() << endl;
-	cout << _myTableSymbol->getTableLiterals() << endl;
+	//cout << _myTableSymbol->getTableDelim() << endl;
+	//cout << _myTableSymbol->getTableID() << endl;
+	//cout << _myTableSymbol->getTableServWord() << endl;
+	//cout << _myTableSymbol->getTableLiterals() << endl;
 }
 
 template<class T>

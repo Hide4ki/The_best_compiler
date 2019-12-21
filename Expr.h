@@ -42,6 +42,7 @@ Program<T>* Expr<T>::derivation(LexIterator<T>&it, LexIterator<T>&end)
 		delete myAssEx;
 		flag = false;
 	}
+	
 	if (!flag)
 	{
 		return 0;
@@ -49,14 +50,16 @@ Program<T>* Expr<T>::derivation(LexIterator<T>&it, LexIterator<T>&end)
 
 	auto[token, place] = *it;
 	auto[name, attribute] = token.getValue();
-
+	flag = true;
 	if ((name == TokenName::DELIM) && (attribute == static_cast<int>(Delim::COMMA)))
 	{
 		auto child = new TerminalSymbol<T>(_table, this);
 		child->givenName(",");
 		Add(child);
+		flag = false;
 		++it;
 	}
-	this->derivation(it, end);
+	if(!flag)
+		this->derivation(it, end);
 	return this;
 }

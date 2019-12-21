@@ -18,8 +18,10 @@ class StmtAD : public Program<T>
 {
 private:
 	StmtAD() = delete;
+	int pl1;
 	int pl2;
 	int pl3;
+	int pl4;
 public:
 	explicit StmtAD(TableSymbol*, Program<T>*);
 	Program<T> *derivation(LexIterator<T>&, LexIterator<T>&) override;
@@ -99,7 +101,7 @@ Program<T>* StmtAD<T>::derivation(LexIterator<T>&it, LexIterator<T>&end)
 		if (name == TokenName::ID)
 		{
 			checkdecl(attribute, place);
-			put_lex(token);
+			put_lex5(token);
 			++it;
 			auto child = new TerminalSymbol<T>(_table, this);
 			child->givenName(_table->getTableID().getName(attribute));
@@ -174,6 +176,7 @@ Program<T>* StmtAD<T>::derivation(LexIterator<T>&it, LexIterator<T>&end)
 		else
 			throw new MyException("Expected:';'", place);
 
+		pl2 = _polis.size();
 		auto myOrEx = new OrEx<T>(_table, this);
 		if (myOrEx->derivation(it, end) != EmptyString)
 			Add(myOrEx);
@@ -184,6 +187,13 @@ Program<T>* StmtAD<T>::derivation(LexIterator<T>&it, LexIterator<T>&end)
 		}
 		eqbool(place);
 
+		pl3 = _polis.size();
+		put_lex(make_op(ExtraType::WRONGTYPE));
+		put_lex(make_op(ExtraType::IFGOTO_OP));
+		pl4 = _polis.size();
+		put_lex(make_op(ExtraType::WRONGTYPE));
+		put_lex(make_op(ExtraType::GOTO_OP));
+		pl1 = _polis.size();
 		r1 = *it;
 		token = r1.first;
 		place = r1.second;
@@ -209,13 +219,17 @@ Program<T>* StmtAD<T>::derivation(LexIterator<T>&it, LexIterator<T>&end)
 			delete myExpr;
 		}
 
+		
+		put_lex(make_labl(pl2));
+		put_lex(make_op(ExtraType::GOTO_OP));
+
 		r1 = *it;
 		token = r1.first;
 		place = r1.second;
 		r2 = token.getValue();
 		name = r2.first;
 		attribute = r2.second;
-
+		_polis[pl4] = make_labl(_polis.size());
 		if (name == TokenName::DELIM && attribute == static_cast<int>(Delim::RBRACKETS_R))
 		{
 			auto child = new TerminalSymbol<T>(_table, this);
@@ -241,6 +255,9 @@ Program<T>* StmtAD<T>::derivation(LexIterator<T>&it, LexIterator<T>&end)
 		name = r2.first;
 		attribute = r2.second;
 
+		put_lex(make_labl(pl1));
+		put_lex(make_op(ExtraType::GOTO_OP));
+		_polis[pl3] = make_labl(_polis.size());
 		if (name == TokenName::WORD && attribute == static_cast<int>(ServWord::ENDFOR))
 		{
 			auto child = new TerminalSymbol<T>(_table, this);
@@ -270,6 +287,7 @@ Program<T>* StmtAD<T>::derivation(LexIterator<T>&it, LexIterator<T>&end)
 	}
 	else if (name == TokenName::WORD && attribute == static_cast<int>(ServWord::WHILE))
 	{	//while (<orEx>) <stmt> endwhile;
+		pl2 = _polis.size();
 		auto child = new TerminalSymbol<T>(_table, this);
 		child->givenName("while");
 		Add(child);
@@ -302,7 +320,9 @@ Program<T>* StmtAD<T>::derivation(LexIterator<T>&it, LexIterator<T>&end)
 		}
 
 		eqbool(place);
-
+		pl3 = _polis.size();
+		put_lex(make_op(ExtraType::WRONGTYPE));
+		put_lex(make_op(ExtraType::IFGOTO_OP));
 		r1 = *it;
 		token = r1.first;
 		place = r1.second;
@@ -334,7 +354,9 @@ Program<T>* StmtAD<T>::derivation(LexIterator<T>&it, LexIterator<T>&end)
 		r2 = token.getValue();
 		name = r2.first;
 		attribute = r2.second;
-
+		put_lex(make_labl(pl2));
+		put_lex(make_op(ExtraType::GOTO_OP));
+		_polis[pl3] = make_labl(_polis.size());
 		if (name == TokenName::WORD && attribute == static_cast<int>(ServWord::ENDWHILE))
 		{
 			auto child = new TerminalSymbol<T>(_table, this);
@@ -344,7 +366,7 @@ Program<T>* StmtAD<T>::derivation(LexIterator<T>&it, LexIterator<T>&end)
 		}
 		else
 			throw new MyException("Expected:'endwhile'", place);
-
+	
 		r1 = *it;
 		token = r1.first;
 		place = r1.second;
@@ -438,12 +460,15 @@ Program<T>* StmtAD<T>::derivation(LexIterator<T>&it, LexIterator<T>&end)
 			++it;
 			auto myStmt = new Stmts<T>(_table, this);
 			if (myStmt->derivation(it, end) != EmptyString)
+			{
 				Add(myStmt);
+			}
 			else
 			{
 				delete myStmt;
 			}
 		}
+
 		_polis[pl3] = make_labl(_polis.size());
 		r1 = *it;
 		token = r1.first;

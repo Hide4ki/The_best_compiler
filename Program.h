@@ -22,7 +22,7 @@ class LexIterator;
 
 template <class T>
 class Parser;
-enum class ExtraType{ INT, STR, BOOL, OR_OP, AND_OP, EQ_OP, NOTEQ_OP, ASS_OP, IFGOTO_OP, GOTO_OP,  LARGE_OP, LESS_OP, INC_OP, ADD_OP, DIV_OP, MUL_OP, NOT_OP, NEG_OP, WRITE_OP, READ_OP, WRONGTYPE};
+enum class ExtraType{ INT, STR, BOOL, OR_OP, AND_OP, EQ_OP, NOTEQ_OP, ASS_OP, IFGOTO_OP, GOTO_OP,  LARGE_OP, LESS_OP, INC_OP, ADD_OP, DIV_OP, MUL_OP, NOT_OP, NEG_OP, NEGU_OP, WRITE_OP, READ_OP, WRONGTYPE};
 template <class T>
 class Program
 {
@@ -202,18 +202,13 @@ inline void Program<T>::put_lex5(Token a)
 template<class T>
 inline Token Program<T>::make_labl(int a )
 {
-	int b = 0;
-	switch (a)
-	{
-
-	}
-	return Token(TokenName::DELIM, b);
+	return Token(TokenName::NULLTOKEN, a);
 }
 
 template<class T>
 inline Token Program<T>::make_op(ExtraType a )
 {
-	return Token(TokenName::ID, static_cast<OptionalAttribute>(a));
+	return Token(TokenName::DELIM, static_cast<OptionalAttribute>(a));
 }
 
 template<class T>
@@ -325,7 +320,6 @@ Program<T>* Program<T>::derivation(LexIterator<T>&it, LexIterator<T>&end)
 	}
 	else
 		throw new MyException("Expected:Service Word END!", place);
-
 	r1 = *it;
 	token = r1.first;
 	place = r1.second;

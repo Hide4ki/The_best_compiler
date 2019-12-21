@@ -1,24 +1,24 @@
 PROGRAMM;
   integer x;
-  bool k;
-  bool z;
-  string y;//integer w;
-  integer a;
-  bool b;
-  y = "Hello World";
-  {
-    integer e;
-    e = 44;
-    while(e<55) endwhile;
-  } 
-  if (a == 1) b = true;  endif;
-  for(;x != 3;)endfor;
-  y = 'q';
-  while(x<3)y = 'q';endwhile;
-  integer d;
-  /*intger r*/bool k2;
-  for(x = 5; x<11; x = x + 1)
-  integer l;
-  z =-l++*34/32+x>58 != true && x > 45 || false;
+  integer y;
+  x = 5;
+  read y;
+  integer z; 
+  z = x + y;
+  write z;
+  string j;
+  j = "Hello world";
+  write j;
+  integer i;
+  for(i = 0; i < 5; i = i + 1)
+    write 2;
   endfor;
+  write i;
+  while(x > 0)
+    write 3;
+    x = x - 1;
+  endwhile;
+  if(z == 9)
+    write 10;
+  endif;
 END;

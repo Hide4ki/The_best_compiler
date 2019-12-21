@@ -18,23 +18,6 @@ int main()
 
 	myInterpretator->execute();
 
-	//istreambuf_iterator<char>(fin), istreambuf_iterator<char>());
-
-	//try
-	//{
-	//	++a;
-	//	for (; a != c; ++a)
-	//		cout << *a << endl;
-	//}
-	//catch (MyException *e)
-	//{
-	//	cout << e->what() << endl;
-	//	delete e;
-	//}
-	//cout << b.getTableDelim() << endl;
-	//cout << b.getTableID() << endl;
-	//cout << b.getTableServWord() << endl;
-	//cout << b.getTableLiterals() << endl;
 	system("pause");
 	return 0;
 }

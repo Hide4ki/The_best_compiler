@@ -1,6 +1,6 @@
 #pragma once
 #include <map>
-enum class TokenName {NULLTOKEN, ID, DELIM, WORD, LITERAL, ADDRESS};
+enum class TokenName {NULLTOKEN, ID, DELIM, WORD, LITERAL, ADDRESS , END};
 
 using namespace std;
 using OptionalAttribute = long;
