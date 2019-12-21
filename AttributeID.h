@@ -11,6 +11,7 @@ private:
 	AttributeID() = default;
 	string _name;
 	Type _type;
+	int _value;
 	bool _decl{ false };
 	int _indexValue;
 	friend class TableID;

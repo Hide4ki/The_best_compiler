@@ -35,12 +35,13 @@ Program<T>* Stmt<T>::derivation(LexIterator<T>&it, LexIterator<T>&end)
 {
 	bool flag = false;
 	auto myDecls = new Decls<T>(_table, this);
-	if (myDecls->derivation(it, end) != EmptyString)
-		Add(myDecls);
-	else
+	if (myDecls->derivation(it, end) == EmptyString)
 	{
 		flag = true;
-		delete myDecls;
+	}
+	else
+	{
+		Add(myDecls);
 	}
 
 	auto myStmtAD = new StmtAD<T>(_table, this);

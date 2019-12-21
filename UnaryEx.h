@@ -64,6 +64,14 @@ Program<T>* UnaryEx<T>::derivation(LexIterator<T>&it, LexIterator<T>&end)
 	if (attribute == static_cast<int>(Delim::NOT_OP))
 		checknot(place);
 	if (attribute == static_cast<int>(Delim::INC_OP) || attribute == static_cast<int>(Delim::NEG_OP))
+	{
 		checkunary(place);
+		if (attribute == static_cast<int>(Delim::NEG_OP))
+			put_lex(make_op(ExtraType::NEG_OP));
+		if (attribute == static_cast<int>(Delim::INC_OP))
+			put_lex(make_op(ExtraType::INC_OP));
+
+		
+	}
 	return this;
 }

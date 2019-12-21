@@ -24,6 +24,8 @@ public:
 	bool declare(int);
 	Type getType(int);
 	string getName(int);
+	int getValue(int);
+	void setValue(int, int);
 	friend ostream &operator<<(ostream&, const TableID&);
 	friend TableSymbol;
 };

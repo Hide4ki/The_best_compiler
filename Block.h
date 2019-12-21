@@ -33,8 +33,13 @@ Block<T>::Block(TableSymbol *table, Program<T> *myParent):Program<T>{table,myPar
 template<class T>
 Program<T>* Block<T>::derivation(LexIterator<T>&it, LexIterator<T>&end)
 {
-	auto [token, place] = *it;
-	auto [name, attribute] = token.getValue();
+	auto r1 = *it;
+	auto token = r1.first;
+	auto place = r1.second;
+	auto r2 = token.getValue();
+	auto name = r2.first;
+	auto attribute = r2.second;
+
 	if (name == TokenName::DELIM && attribute == static_cast<int>(Delim::BRACKETS_L))
 	{
 		auto child = new TerminalSymbol<T>(_table, this);
@@ -46,12 +51,8 @@ Program<T>* Block<T>::derivation(LexIterator<T>&it, LexIterator<T>&end)
 		return 0;
 
 	auto myDecls = new Decls<T>(_table, this);
-	if (myDecls->derivation(it, end) != EmptyString)
-		Add(myDecls);
-	else
-	{
-		delete myDecls;
-	}
+	myDecls->derivation(it, end);
+	delete myDecls;
 
 	auto myStmts = new Stmts<T>(_table, this);
 	if (myStmts->derivation(it, end) != EmptyString)
@@ -61,8 +62,13 @@ Program<T>* Block<T>::derivation(LexIterator<T>&it, LexIterator<T>&end)
 		delete myStmts;
 	}
 
-	auto[token, place] = *it;
-	auto[name, attribute] = token.getValue();
+	r1 = *it;
+	token = r1.first;
+	place = r1.second;
+	r2 = token.getValue();
+	name = r2.first;
+	attribute = r2.second; 
+
 	if (name == TokenName::DELIM && attribute == static_cast<int>(Delim::BRACKETS_R))
 	{
 		auto child = new TerminalSymbol<T>(_table, this);

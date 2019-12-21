@@ -33,8 +33,13 @@ AddExAD<T>::AddExAD(TableSymbol *table, Program<T> *myParent) :OrEx<T>{ table,my
 template<class T>
 Program<T>* AddExAD<T>::derivation(LexIterator<T>&it, LexIterator<T>&end)
 {
-	auto[token, place] = *it;
-	auto[name, attribute] = token.getValue();
+	auto r1 = *it;
+	auto token = r1.first;
+	auto place = r1.second;
+	auto r2 = token.getValue();
+	auto name = r2.first;
+	auto attribute = r2.second;
+
 	if (name == TokenName::DELIM && attribute == static_cast<int>(Delim::ADD_OP))
 	{
 		auto child = new TerminalSymbol<T>(_table, this);

@@ -20,7 +20,7 @@ private:
 protected:
 public:
 	explicit OrEx(TableSymbol*, Program<T>*);
-	void Add(Program<T>*) override;
+	void ConvertToSyntaxTree() override;
 	Program<T> *derivation(LexIterator<T>&, LexIterator<T>&) override;
 	friend class Parser<T>;
 };
@@ -32,18 +32,20 @@ OrEx<T>::OrEx(TableSymbol *table, Program<T> *myParent) :Program<T>{ table,myPar
 }
 
 template<class T>
-void OrEx<T>::Add(Program<T>* child)
+inline void OrEx<T>::ConvertToSyntaxTree()
 {
-	if ((child->GetNumChilds()) == 1)
-	{
-		auto[it, end] = child->CreateIterator();
-		auto tmp = *it;
-		child->Remove(tmp);
-		delete child;
-		Program<T>::Add(tmp);
-	}
-	else
-		Program<T>::Add(child);
+	Program<T>::ConvertToSyntaxTree();
+	auto[child, end1] = CreateIterator();
+	for(; child != end1; child++)
+		if ((*child)->GetNumChilds() == 1)
+		{
+			auto[it, end2] = (*child)->CreateIterator();
+			auto tmp = *it;
+			(*child)->Remove(tmp);
+			delete *child;
+			*child = tmp;
+			(tmp->_parent) = this;
+		}
 }
 
 //<orEx> ::= <andEx><orExAD>,

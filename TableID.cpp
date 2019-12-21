@@ -47,6 +47,16 @@ string TableID::getName(int i)
 	return _body.at(i)._name;
 }
 
+int TableID::getValue(int i)
+{
+	return _body.at(i)._value;
+}
+
+void TableID::setValue(int i, int a)
+{
+	_body.at(i)._value = a;
+}
+
 ostream & operator<<(ostream &stream, const TableID &table)
 {
 	stream << "Table ID" << endl;

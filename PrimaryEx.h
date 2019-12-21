@@ -35,10 +35,10 @@ Program<T>* PrimaryEx<T>::derivation(LexIterator<T>&it, LexIterator<T>&end)
 {
 	auto[token, place] = *it;
 	auto[name, attribute] = token.getValue();
-	
 	if (name == TokenName::ID)
 	{
 		checkdecl(attribute,place);
+		put_lex(token);
 		++it;
 		auto child = new TerminalSymbol<T>(_table, this);
 		child->givenName(_table->getTableID().getName(attribute));

@@ -42,7 +42,8 @@ Program<T>* BoolLiteral<T>::derivation(LexIterator<T>&it, LexIterator<T>&end)
 	else 
 		throw new MyException("Expected:'true / false'", place);
 	Add(child);
-	spush(ExtraType::BOOL);
+	spush(ExtraType::BOOL); 
+	put_lex(token);
 	++it;
 	return this;
 }

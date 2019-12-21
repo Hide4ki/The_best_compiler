@@ -38,6 +38,7 @@ Program<T>* IntegerLiteral<T>::derivation(LexIterator<T>&it, LexIterator<T>&end)
 	child->givenName(to_string(_table->getTableLiterals().getNum(attribute)));
 	Add(child);
 	spush(ExtraType::INT);
+	put_lex(token);
 	++it;
 	return this;
 }

@@ -33,8 +33,13 @@ RelEx<T>::RelEx(TableSymbol *table, Program<T> *myParent) :OrEx<T>{ table,myPare
 template<class T>
 Program<T>* RelEx<T>::derivation(LexIterator<T>&it, LexIterator<T>&end)
 {
-	auto[token, place] = *it;
-	auto[name, attribute] = token.getValue();
+	auto r1 = *it;
+	auto token = r1.first;
+	auto place = r1.second;
+	auto r2 = token.getValue();
+	auto name = r2.first;
+	auto attribute = r2.second;
+
 	auto myAddEx = new AddEx<T>(_table, this);
 	if (myAddEx->derivation(it, end) != EmptyString)
 		Add(myAddEx);
@@ -43,8 +48,14 @@ Program<T>* RelEx<T>::derivation(LexIterator<T>&it, LexIterator<T>&end)
 		delete myAddEx;
 		throw new MyException("Expected:'myAddEx'", place);
 	}
-	auto[token, place] = *it;
-	auto[name, attribute] = token.getValue();
+
+	r1 = *it;
+	token = r1.first;
+	place = r1.second;
+	r2 = token.getValue();
+	name = r2.first;
+	attribute = r2.second;
+
 	if (name == TokenName::DELIM && attribute == static_cast<int>(Delim::LESS_OP))
 	{
 		auto child = new TerminalSymbol<T>(_table, this);

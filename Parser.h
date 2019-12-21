@@ -31,7 +31,7 @@ private:
 	~Parser();
 	TableSymbol *_table;
 	void SetTable(TableSymbol *);
-	Program<T> *getProgram();
+	Program<T> *getSyntaxTree();
 public:
 	friend Interpretator<T>;
 };
@@ -53,7 +53,7 @@ void Parser<T>::SetTable(TableSymbol *table)
 }
 
 template<class T>
-Program<T> * Parser<T>::getProgram()
+Program<T> * Parser<T>::getSyntaxTree()
 {
 	auto myProgram = new Program<T>(_table);
 	try
@@ -65,5 +65,25 @@ Program<T> * Parser<T>::getProgram()
 		cout << e->what() << endl;
 		delete e;
 	}
+	ofstream parse("parse_tree.dot");
+	if (!parse)
+		throw new MyException("File can't be open", Place(-1, -1));
+	parse << "digraph A" << endl;
+	parse << "{" << endl;
+	myProgram->PrintTree(parse);
+	parse << "}" << endl;
+	parse.close();
+	system("graphviz-2.38\\bin\\dot -Tpng parse_tree.dot -o parse_tree.png");
+
+	myProgram->ConvertToSyntaxTree();
+	ofstream syntax("syntax_tree.dot");
+	if (!syntax)
+		throw new MyException("File can't be open", Place(-1, -1));
+	syntax << "digraph A" << endl;
+	syntax << "{" << endl;
+	myProgram->PrintTree(syntax);
+	syntax << "}" << endl;
+	syntax.close();
+	system("graphviz-2.38\\bin\\dot -Tpng syntax_tree.dot -o syntax_tree.png");
 	return myProgram;
 }

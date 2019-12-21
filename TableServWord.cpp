@@ -18,6 +18,9 @@ TableServWord::TableServWord()
 	_words[static_cast<int>(ServWord::STRING)] = "string";
 	_words[static_cast<int>(ServWord::TRUE)] = "true";
 	_words[static_cast<int>(ServWord::WHILE)] = "while";
+	_words[static_cast<int>(ServWord::WRITE)] = "write";
+	_words[static_cast<int>(ServWord::READ)] = "read";
+
 }
 
 string_view TableServWord::operator[](long i) const

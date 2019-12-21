@@ -38,6 +38,7 @@ Program<T>* StringLiteral<T>::derivation(LexIterator<T>&it, LexIterator<T>&end)
 	child->givenName(_table->getTableLiterals().getStr(attribute));
 	Add(child);
 	spush(ExtraType::STR);
+	put_lex(token);
 	++it;
 	return this;
 }

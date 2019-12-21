@@ -33,8 +33,13 @@ AddEx<T>::AddEx(TableSymbol *table, Program<T> *myParent) :OrEx<T>{ table,myPare
 template<class T>
 Program<T>* AddEx<T>::derivation(LexIterator<T>&it, LexIterator<T>&end)
 {
-	auto[token, place] = *it;
-	auto[name, attribute] = token.getValue();
+	auto r1 = *it;
+	auto token = r1.first;
+	auto place = r1.second;
+	auto r2 = token.getValue();
+	auto name = r2.first;
+	auto attribute = r2.second;
+
 	auto myMultiEx = new MultiEx<T>(_table, this);
 	if (myMultiEx->derivation(it, end) != EmptyString)
 		Add(myMultiEx);

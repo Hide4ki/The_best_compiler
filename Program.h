@@ -10,15 +10,19 @@
 #include "Place.h"
 #include "rules.h"
 #include <stack>
+#include "SyntaxTreeIterator.h"
 
 using namespace std;
+
+template <class T>
+class SyntaxTreeIterator;
 
 template <class T>
 class LexIterator;
 
 template <class T>
 class Parser;
-enum class ExtraType{ INT, STR, BOOL, OR_OP, AND_OP, EQ_OP, NOTEQ_OP, ASS_OP, LARGE_OP, LESS_OP, INC_OP, ADD_OP, DIV_OP, MUL_OP, NOT_OP, NEG_OP, WRONGTYPE};
+enum class ExtraType{ INT, STR, BOOL, OR_OP, AND_OP, EQ_OP, NOTEQ_OP, ASS_OP, IFGOTO_OP, GOTO_OP,  LARGE_OP, LESS_OP, INC_OP, ADD_OP, DIV_OP, MUL_OP, NOT_OP, NEG_OP, WRITE_OP, READ_OP, WRONGTYPE};
 template <class T>
 class Program
 {
@@ -26,10 +30,16 @@ private:
 	Program() = delete;
 	string _name{ "Program" };
 	int _id;
-	Program<T>* _parent;
 	vector<Program<T>*> _childs;
 	static stack<ExtraType> _checkOperator;
+	int _cntVisit;
 protected:
+	static vector<Token>  _polis;
+
+	explicit Program(TableSymbol*, Program<T>* myParent = 0);
+	void SetName(string name) { _name = name; };
+	TableSymbol *_table;
+public:
 	void decid(int, Type, Place place);
 	void checkdecl(int, Place place);
 	ExtraType getType(ExtraType, ExtraType, ExtraType);
@@ -37,13 +47,15 @@ protected:
 	ExtraType spop();
 	void checkop(Place);
 	void checknot(Place);
+	void put_lex(Token);
+	void put_lex5(Token);
+	Token make_labl(int);
+	Token make_op(ExtraType);
 	void checkunary(Place);
 	void eqtype(Place);
-	void eqbool(Place);
-	explicit Program(TableSymbol*, Program<T>* myParent = 0);
-	void SetName(string name) { _name = name; };
-	TableSymbol *_table;
-public:
+	void eqbool(Place); 
+	vector<Token> GeneratePolis();
+	Program<T>* _parent;
 	int GetNumChilds() { return _childs.size(); };
 	virtual ~Program();
 	virtual Program<T> *derivation(LexIterator<T>&,LexIterator<T>&);
@@ -52,11 +64,16 @@ public:
 	void Remove(Program<T>*);
 	Program<T>* GetParent();
 	void PrintTree(ofstream &);
+	virtual void ConvertToSyntaxTree();
 	pair<typename vector<Program<T>*>::iterator, typename vector<Program<T>*>::iterator> CreateIterator();
 	friend class Parser<T>;
+	friend class SyntaxTreeIterator<T>;
 };
 template <class T>
 stack<ExtraType> Program<T>::_checkOperator;
+
+template <class T>
+vector<Token>  Program<T>::_polis;
 
 template<class T>
 void Program<T>::decid(int i, Type type, Place place)
@@ -149,7 +166,10 @@ inline void Program<T>::checkop(Place here)
 	auto t1 = spop();
 	auto res = getType(op, t1, t2);
 	if (res != ExtraType::WRONGTYPE)
+	{
 		spush(res);
+		put_lex(make_op(op));
+	}
 	else
 		throw new MyException("Wrong type, another type was expected!!!", here);
 }
@@ -160,7 +180,40 @@ inline void Program<T>::checknot(Place here)
 	if (spop() != ExtraType::BOOL)
 		throw new MyException("\'!\' applicade only bool type", here);
 	else
+	{
 		spush(ExtraType::BOOL);
+		put_lex(make_op(ExtraType::NOT_OP));
+	}
+}
+
+template<class T>
+inline void Program<T>::put_lex(Token a)
+{
+	_polis.push_back(a);
+}
+
+template<class T>
+inline void Program<T>::put_lex5(Token a)
+{
+	a.setName(TokenName::ADDRESS);
+	_polis.push_back(a);
+}
+
+template<class T>
+inline Token Program<T>::make_labl(int a )
+{
+	int b = 0;
+	switch (a)
+	{
+
+	}
+	return Token(TokenName::DELIM, b);
+}
+
+template<class T>
+inline Token Program<T>::make_op(ExtraType a )
+{
+	return Token(TokenName::ID, static_cast<OptionalAttribute>(a));
 }
 
 template<class T>
@@ -187,6 +240,12 @@ inline void Program<T>::eqbool(Place here)
 }
 
 template<class T>
+inline vector<Token> Program<T>::GeneratePolis()
+{
+	return _polis;
+}
+
+template<class T>
 Program<T>::Program(TableSymbol*table, Program<T>* myParent) :_parent{ myParent }, _table{ table }
 {
 }
@@ -202,8 +261,12 @@ Program<T>::~Program()
 template<class T>
 Program<T>* Program<T>::derivation(LexIterator<T>&it, LexIterator<T>&end)
 {
-	auto[token, place] = *it;
-	auto[name, attribute] = token.getValue();
+	auto r1 = *it;
+	auto token = r1.first;
+	auto place = r1.second;
+	auto r2 = token.getValue();
+	auto name = r2.first;
+	auto attribute = r2.second;
 
 	if (name == TokenName::WORD && attribute == static_cast<int>(ServWord::PROGRAMM))
 	{
@@ -215,9 +278,12 @@ Program<T>* Program<T>::derivation(LexIterator<T>&it, LexIterator<T>&end)
 	else
 		throw new MyException("Expected:Service Word PROGRAMM!", place);
 
-	auto [token, place] = *it;
-	auto [name, attribute] = token.getValue();
-
+	r1 = *it;
+	token = r1.first;
+	place = r1.second;
+	r2 = token.getValue();
+	name = r2.first;
+	attribute = r2.second;
 	if ((name == TokenName::DELIM) && (attribute == static_cast<int>(Delim::SEMICOLON)))
 	{
 		auto child = new TerminalSymbol<T>(_table, this);
@@ -234,7 +300,7 @@ Program<T>* Program<T>::derivation(LexIterator<T>&it, LexIterator<T>&end)
 	else
 	{
 		delete myDecls;
-	}
+	} 
 
 	auto myStmts = new Stmts<T>(_table, this);
 	if (myStmts->derivation(it, end) != EmptyString)
@@ -244,8 +310,12 @@ Program<T>* Program<T>::derivation(LexIterator<T>&it, LexIterator<T>&end)
 		delete myStmts;
 	}
 
-	auto[token, place] = *it;
-	auto[name, attribute] = token.getValue();
+	r1 = *it;
+	token = r1.first;
+	place = r1.second;
+	r2 = token.getValue();
+	name = r2.first;
+	attribute = r2.second;
 	if (name == TokenName::WORD && attribute == static_cast<int>(ServWord::END))
 	{
 		auto child = new TerminalSymbol<T>(_table, this);
@@ -256,8 +326,12 @@ Program<T>* Program<T>::derivation(LexIterator<T>&it, LexIterator<T>&end)
 	else
 		throw new MyException("Expected:Service Word END!", place);
 
-	auto[token, place] = *it;
-	auto[name, attribute] = token.getValue();
+	r1 = *it;
+	token = r1.first;
+	place = r1.second;
+	r2 = token.getValue();
+	name = r2.first;
+	attribute = r2.second;
 	if (name == TokenName::DELIM && attribute == static_cast<int>(Delim::SEMICOLON))
 	{
 		auto child = new TerminalSymbol<T>(_table, this);
@@ -279,7 +353,9 @@ template<class T>
 void Program<T>::Add(Program<T>*child)
 {
 	static int id = 0;
-	child->_id = id++;
+	if(child->_id == 0)
+		child->_id = id++;
+	child->_parent = this;
 	_childs.push_back(child);
 }
 
@@ -308,6 +384,33 @@ inline void Program<T>::PrintTree(ofstream &stream)
 		stream << "\t\"" << "nodeId = " << _id <<  " | "  << _name << "\"->\"" << "nodeId = " << ch->_id << " | " << ch->_name  << "\";" << endl;
 		ch->PrintTree(stream); 
 	}
+}
+
+template<class T>
+void Program<T>::ConvertToSyntaxTree()
+{
+	for (auto &child : _childs)
+	{
+		child->ConvertToSyntaxTree();
+		if (child->_name == "Decls" || child->_name == ";")
+		{
+			delete child;
+			Remove(child);
+		}
+		if (child->_name == "Stmts")
+		{
+			for (auto &stmt : child->_childs)
+			{
+				auto tmp = stmt->_childs[0];
+				stmt->Remove(tmp);
+				delete stmt;
+				stmt = tmp;
+				tmp->_parent = child;
+			}
+		}
+	}
+
+	sort(_childs.begin(), _childs.end(), [](Program<T>*l, Program<T>*r) {return l->_id < r->_id; });
 }
 
 template<class T>

@@ -34,8 +34,14 @@ template<class T>
 Program<T>* Decl<T>::derivation(LexIterator<T>&it, LexIterator<T>&end)
 {
 	Type typeDecl;
-	auto[token, place] = *it;
-	auto[name, attribute] = token.getValue();
+
+	auto r1 = *it;
+	auto token = r1.first;
+	auto place = r1.second;
+	auto r2 = token.getValue();
+	auto name = r2.first;
+	auto attribute = r2.second;
+	
 	if (name == TokenName::WORD && (attribute == static_cast<int>(ServWord::BOOL) || attribute == static_cast<int>(ServWord::INTEGER) || attribute == static_cast<int>(ServWord::STRING)))
 	{
 		++it;
@@ -61,8 +67,14 @@ Program<T>* Decl<T>::derivation(LexIterator<T>&it, LexIterator<T>&end)
 	}
 	else
 		return 0;
-	auto[token, place] = *it;
-	auto[name, attribute] = token.getValue();
+
+	r1 = *it;
+	token = r1.first;
+	place = r1.second;
+	r2 = token.getValue();
+	name = r2.first;
+	attribute = r2.second;
+
 	if (name == TokenName::ID)
 	{
 		++it;
@@ -74,8 +86,13 @@ Program<T>* Decl<T>::derivation(LexIterator<T>&it, LexIterator<T>&end)
 	else
 		throw new MyException("Expected:ID!", place);
 
-	auto[token, place] = *it;
-	auto[name, attribute] = token.getValue();
+	r1 = *it;
+	token = r1.first;
+	place = r1.second;
+	r2 = token.getValue();
+	name = r2.first;
+	attribute = r2.second;
+
 	if (name == TokenName::DELIM && attribute == static_cast<int>(Delim::SEMICOLON))
 	{
 		auto child = new TerminalSymbol<T>(_table, this);

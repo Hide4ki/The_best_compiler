@@ -2,6 +2,7 @@
 #include "Program.h"
 #include "LexIterator.h"
 #include "rules.h"
+#include "Token.h"
 
 template <class T>
 class Parser;
@@ -17,6 +18,8 @@ class StmtAD : public Program<T>
 {
 private:
 	StmtAD() = delete;
+	int pl2;
+	int pl3;
 public:
 	explicit StmtAD(TableSymbol*, Program<T>*);
 	Program<T> *derivation(LexIterator<T>&, LexIterator<T>&) override;
@@ -33,18 +36,108 @@ StmtAD<T>::StmtAD(TableSymbol *table, Program<T> *myParent) :Program<T>{ table,m
 template<class T>
 Program<T>* StmtAD<T>::derivation(LexIterator<T>&it, LexIterator<T>&end)
 {
-	auto[token, place] = *it;
-	auto[name, attribute] = token.getValue();
-	//for(<assEx>; <orEx>; <expr>) <stmt>  endfor;
-	if (name == TokenName::WORD && attribute == static_cast<int>(ServWord::FOR))
+	auto r1 = *it;
+	auto token = r1.first;
+	auto place = r1.second;
+	auto r2 = token.getValue();
+	auto name = r2.first;
+	auto attribute = r2.second;
+	if (name == TokenName::WORD && attribute == static_cast<int>(ServWord::WRITE))
+	{
+		auto child = new TerminalSymbol<T>(_table, this);
+		child->givenName("write");
+		Add(child);
+		++it;
+
+		r1 = *it;
+		token = r1.first;
+		place = r1.second;
+		r2 = token.getValue();
+		name = r2.first;
+		attribute = r2.second;
+
+		auto myOrEx = new OrEx<T>(_table, this);
+		if (myOrEx->derivation(it, end) != EmptyString)
+			Add(myOrEx);
+		else
+		{
+			delete myOrEx;
+			throw new MyException("Expected: expreshion", place);
+		}
+		put_lex(make_op(ExtraType::WRITE_OP));
+		r1 = *it;
+		token = r1.first;
+		place = r1.second;
+		r2 = token.getValue();
+		name = r2.first;
+		attribute = r2.second;
+
+		if (name == TokenName::DELIM && attribute == static_cast<int>(Delim::SEMICOLON))
+		{
+			auto child = new TerminalSymbol<T>(_table, this);
+			child->givenName(";");
+			Add(child);
+			++it;
+		}
+		else
+			throw new MyException("Expected:';'", place);
+	}
+	else if (name == TokenName::WORD && attribute == static_cast<int>(ServWord::READ))
+	{
+		auto child = new TerminalSymbol<T>(_table, this);
+		child->givenName("read");
+		Add(child);
+		++it;
+
+		r1 = *it;
+		token = r1.first;
+		place = r1.second;
+		r2 = token.getValue();
+		name = r2.first;
+		attribute = r2.second;
+
+		if (name == TokenName::ID)
+		{
+			checkdecl(attribute, place);
+			put_lex(token);
+			++it;
+			auto child = new TerminalSymbol<T>(_table, this);
+			child->givenName(_table->getTableID().getName(attribute));
+			Add(child);
+		}
+		else 
+			throw new MyException("Expected: id", place);
+		put_lex(make_op(ExtraType::READ_OP));
+		r1 = *it;
+		token = r1.first;
+		place = r1.second;
+		r2 = token.getValue();
+		name = r2.first;
+		attribute = r2.second;
+
+		if (name == TokenName::DELIM && attribute == static_cast<int>(Delim::SEMICOLON))
+		{
+			auto child = new TerminalSymbol<T>(_table, this);
+			child->givenName(";");
+			Add(child);
+			++it;
+		}
+		else
+			throw new MyException("Expected:';'", place);
+	}//for(<assEx>; <orEx>; <expr>) <stmts>  endfor;
+	else if (name == TokenName::WORD && attribute == static_cast<int>(ServWord::FOR))
 	{
 		auto child = new TerminalSymbol<T>(_table, this);
 		child->givenName("for");
 		Add(child);
 		++it;
 
-		auto[token, place] = *it;
-		auto[name, attribute] = token.getValue();
+		r1 = *it;
+		token = r1.first;
+		place = r1.second;
+		r2 = token.getValue();
+		name = r2.first;
+		attribute = r2.second;
 
 		if (name == TokenName::DELIM && attribute == static_cast<int>(Delim::RBRACKETS_L))
 		{
@@ -64,8 +157,13 @@ Program<T>* StmtAD<T>::derivation(LexIterator<T>&it, LexIterator<T>&end)
 			delete myAssEx;
 		}
 
-		auto[token, place] = *it;
-		auto[name, attribute] = token.getValue();
+		r1 = *it;
+		token = r1.first;
+		place = r1.second;
+		r2 = token.getValue();
+		name = r2.first;
+		attribute = r2.second;
+
 		if (name == TokenName::DELIM && attribute == static_cast<int>(Delim::SEMICOLON))
 		{
 			auto child = new TerminalSymbol<T>(_table, this);
@@ -85,8 +183,14 @@ Program<T>* StmtAD<T>::derivation(LexIterator<T>&it, LexIterator<T>&end)
 			throw new MyException("Expected: condition", place);
 		}
 		eqbool(place);
-		auto[token, place] = *it;
-		auto[name, attribute] = token.getValue();
+
+		r1 = *it;
+		token = r1.first;
+		place = r1.second;
+		r2 = token.getValue();
+		name = r2.first;
+		attribute = r2.second;
+
 		if (name == TokenName::DELIM && attribute == static_cast<int>(Delim::SEMICOLON))
 		{
 			auto child = new TerminalSymbol<T>(_table, this);
@@ -105,8 +209,13 @@ Program<T>* StmtAD<T>::derivation(LexIterator<T>&it, LexIterator<T>&end)
 			delete myExpr;
 		}
 
-		auto[token, place] = *it;
-		auto[name, attribute] = token.getValue();
+		r1 = *it;
+		token = r1.first;
+		place = r1.second;
+		r2 = token.getValue();
+		name = r2.first;
+		attribute = r2.second;
+
 		if (name == TokenName::DELIM && attribute == static_cast<int>(Delim::RBRACKETS_R))
 		{
 			auto child = new TerminalSymbol<T>(_table, this);
@@ -117,7 +226,7 @@ Program<T>* StmtAD<T>::derivation(LexIterator<T>&it, LexIterator<T>&end)
 		else
 			throw new MyException("Expected:')'", place);
 
-		auto myStmt = new Stmt<T>(_table, this);
+		auto myStmt = new Stmts<T>(_table, this);
 		if (myStmt->derivation(it, end) != EmptyString)
 			Add(myStmt);
 		else
@@ -125,8 +234,13 @@ Program<T>* StmtAD<T>::derivation(LexIterator<T>&it, LexIterator<T>&end)
 			delete myStmt;
 		}
 
-		auto[token, place] = *it;
-		auto[name, attribute] = token.getValue();
+		r1 = *it;
+		token = r1.first;
+		place = r1.second;
+		r2 = token.getValue();
+		name = r2.first;
+		attribute = r2.second;
+
 		if (name == TokenName::WORD && attribute == static_cast<int>(ServWord::ENDFOR))
 		{
 			auto child = new TerminalSymbol<T>(_table, this);
@@ -136,8 +250,14 @@ Program<T>* StmtAD<T>::derivation(LexIterator<T>&it, LexIterator<T>&end)
 		}
 		else
 			throw new MyException("Expected:'endfor'", place);
-		auto[token, place] = *it;
-		auto[name, attribute] = token.getValue();
+
+		r1 = *it;
+		token = r1.first;
+		place = r1.second;
+		r2 = token.getValue();
+		name = r2.first;
+		attribute = r2.second;
+
 		if (name == TokenName::DELIM && attribute == static_cast<int>(Delim::SEMICOLON))
 		{
 			auto child = new TerminalSymbol<T>(_table, this);
@@ -155,8 +275,12 @@ Program<T>* StmtAD<T>::derivation(LexIterator<T>&it, LexIterator<T>&end)
 		Add(child);
 		++it;
 
-		auto[token, place] = *it;
-		auto[name, attribute] = token.getValue();
+		r1 = *it;
+		token = r1.first;
+		place = r1.second;
+		r2 = token.getValue();
+		name = r2.first;
+		attribute = r2.second;
 
 		if (name == TokenName::DELIM && attribute == static_cast<int>(Delim::RBRACKETS_L))
 		{
@@ -179,8 +303,13 @@ Program<T>* StmtAD<T>::derivation(LexIterator<T>&it, LexIterator<T>&end)
 
 		eqbool(place);
 
-		auto[token, place] = *it;
-		auto[name, attribute] = token.getValue();
+		r1 = *it;
+		token = r1.first;
+		place = r1.second;
+		r2 = token.getValue();
+		name = r2.first;
+		attribute = r2.second;
+
 		if (name == TokenName::DELIM && attribute == static_cast<int>(Delim::RBRACKETS_R))
 		{
 			auto child = new TerminalSymbol<T>(_table, this);
@@ -191,7 +320,7 @@ Program<T>* StmtAD<T>::derivation(LexIterator<T>&it, LexIterator<T>&end)
 		else
 			throw new MyException("Expected:')'", place);
 
-		auto myStmt = new Stmt<T>(_table, this);
+		auto myStmt = new Stmts<T>(_table, this);
 		if (myStmt->derivation(it, end) != EmptyString)
 			Add(myStmt);
 		else
@@ -199,8 +328,13 @@ Program<T>* StmtAD<T>::derivation(LexIterator<T>&it, LexIterator<T>&end)
 			delete myStmt;
 		}
 
-		auto[token, place] = *it;
-		auto[name, attribute] = token.getValue();
+		r1 = *it;
+		token = r1.first;
+		place = r1.second;
+		r2 = token.getValue();
+		name = r2.first;
+		attribute = r2.second;
+
 		if (name == TokenName::WORD && attribute == static_cast<int>(ServWord::ENDWHILE))
 		{
 			auto child = new TerminalSymbol<T>(_table, this);
@@ -210,8 +344,14 @@ Program<T>* StmtAD<T>::derivation(LexIterator<T>&it, LexIterator<T>&end)
 		}
 		else
 			throw new MyException("Expected:'endwhile'", place);
-		auto[token, place] = *it;
-		auto[name, attribute] = token.getValue();
+
+		r1 = *it;
+		token = r1.first;
+		place = r1.second;
+		r2 = token.getValue();
+		name = r2.first;
+		attribute = r2.second;
+
 		if (name == TokenName::DELIM && attribute == static_cast<int>(Delim::SEMICOLON))
 		{
 			auto child = new TerminalSymbol<T>(_table, this);
@@ -229,8 +369,12 @@ Program<T>* StmtAD<T>::derivation(LexIterator<T>&it, LexIterator<T>&end)
 		Add(child);
 		++it;
 
-		auto[token, place] = *it;
-		auto[name, attribute] = token.getValue();
+		r1 = *it;
+		token = r1.first;
+		place = r1.second;
+		r2 = token.getValue();
+		name = r2.first;
+		attribute = r2.second;
 
 		if (name == TokenName::DELIM && attribute == static_cast<int>(Delim::RBRACKETS_L))
 		{
@@ -251,9 +395,16 @@ Program<T>* StmtAD<T>::derivation(LexIterator<T>&it, LexIterator<T>&end)
 			throw new MyException("Expected: condition", place);
 		}
 		eqbool(place);
+		pl2 = _polis.size();
+		put_lex(make_op(ExtraType::WRONGTYPE));
+		put_lex(make_op(ExtraType::IFGOTO_OP));
+		r1 = *it;
+		token = r1.first;
+		place = r1.second;
+		r2 = token.getValue();
+		name = r2.first;
+		attribute = r2.second;
 
-		auto[token, place] = *it;
-		auto[name, attribute] = token.getValue();
 		if (name == TokenName::DELIM && attribute == static_cast<int>(Delim::RBRACKETS_R))
 		{
 			auto child = new TerminalSymbol<T>(_table, this);
@@ -264,19 +415,28 @@ Program<T>* StmtAD<T>::derivation(LexIterator<T>&it, LexIterator<T>&end)
 		else
 			throw new MyException("Expected:')'", place);
 
-		auto myStmt = new Stmt<T>(_table, this);
+		auto myStmt = new Stmts<T>(_table, this);
 		if (myStmt->derivation(it, end) != EmptyString)
 			Add(myStmt);
 		else
 		{
 			delete myStmt;
 		}
-		auto[token, place] = *it;
-		auto[name, attribute] = token.getValue();
+		pl3 = _polis.size();
+		put_lex(make_op(ExtraType::WRONGTYPE));
+		put_lex(make_op(ExtraType::GOTO_OP));
+		_polis[pl2] = make_labl(_polis.size());
+		r1 = *it;
+		token = r1.first;
+		place = r1.second;
+		r2 = token.getValue();
+		name = r2.first;
+		attribute = r2.second;
+
 		if (name == TokenName::WORD && attribute == static_cast<int>(ServWord::ELSE))
 		{
 			++it;
-			auto myStmt = new Stmt<T>(_table, this);
+			auto myStmt = new Stmts<T>(_table, this);
 			if (myStmt->derivation(it, end) != EmptyString)
 				Add(myStmt);
 			else
@@ -284,8 +444,14 @@ Program<T>* StmtAD<T>::derivation(LexIterator<T>&it, LexIterator<T>&end)
 				delete myStmt;
 			}
 		}
-		auto[token, place] = *it;
-		auto[name, attribute] = token.getValue();
+		_polis[pl3] = make_labl(_polis.size());
+		r1 = *it;
+		token = r1.first;
+		place = r1.second;
+		r2 = token.getValue();
+		name = r2.first;
+		attribute = r2.second;
+
 		if (name == TokenName::WORD && attribute == static_cast<int>(ServWord::ENDIF))
 		{
 			auto child = new TerminalSymbol<T>(_table, this);
@@ -295,8 +461,14 @@ Program<T>* StmtAD<T>::derivation(LexIterator<T>&it, LexIterator<T>&end)
 		}
 		else
 			throw new MyException("Expected:'endif'", place);
-		auto[token, place] = *it;
-		auto[name, attribute] = token.getValue();
+
+		r1 = *it;
+		token = r1.first;
+		place = r1.second;
+		r2 = token.getValue();
+		name = r2.first;
+		attribute = r2.second;
+
 		if (name == TokenName::DELIM && attribute == static_cast<int>(Delim::SEMICOLON))
 		{
 			auto child = new TerminalSymbol<T>(_table, this);
@@ -330,8 +502,14 @@ Program<T>* StmtAD<T>::derivation(LexIterator<T>&it, LexIterator<T>&end)
 				delete myExpr;
 			}
 		}
-		auto[token, place] = *it;
-		auto[name, attribute] = token.getValue();
+
+		r1 = *it;
+		token = r1.first;
+		place = r1.second;
+		r2 = token.getValue();
+		name = r2.first;
+		attribute = r2.second;
+
 		if (derivationIdentified)
 			if (name == TokenName::DELIM && attribute == static_cast<int>(Delim::SEMICOLON))
 			{
