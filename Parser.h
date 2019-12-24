@@ -73,7 +73,7 @@ Program<T> * Parser<T>::getSyntaxTree()
 	myProgram->PrintTree(parse);
 	parse << "}" << endl;
 	parse.close();
-	system("graphviz-2.38\\bin\\dot -Tpng parse_tree.dot -o parse_tree.png");
+	//system("graphviz-2.38\\bin\\dot -Tpng parse_tree.dot -o parse_tree.png");
 
 	myProgram->ConvertToSyntaxTree();
 	ofstream syntax("syntax_tree.dot");
@@ -84,6 +84,6 @@ Program<T> * Parser<T>::getSyntaxTree()
 	myProgram->PrintTree(syntax);
 	syntax << "}" << endl;
 	syntax.close();
-	system("graphviz-2.38\\bin\\dot -Tpng syntax_tree.dot -o syntax_tree.png");
+	//system("graphviz-2.38\\bin\\dot -Tpng syntax_tree.dot -o syntax_tree.png");
 	return myProgram;
 }

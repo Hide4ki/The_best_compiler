@@ -77,7 +77,7 @@ void Interpretator<T>::execute()
 				ipush(1);
 			else
 				ipush(0);
-			break; //OR_OP, AND_OP, EQ_OP, NOTEQ_OP, ASS_OP, LARGE_OP, LESS_OP, INC_OP, ADD_OP, DIV_OP, MUL_OP, NOT_OP, NEG_OP,
+			break;
 		case TokenName::DELIM:
 			l = i;
 			ops.at(att+1)(ipush, ipop, _myTableSymbol, l);

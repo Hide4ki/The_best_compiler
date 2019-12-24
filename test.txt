@@ -1,24 +1,16 @@
 PROGRAMM;
-  integer x;
-  integer y;
-  x = 5;
-  read y;
-  integer z; 
-  z = x + y;
-  write z;
-  string j;
-  j = "Hello world";
-  write j;
-  integer i;
-  for(i = 0; i < 5; i = i + 1)
-    write 2;
+  integer f1;
+  integer f2;
+  f1 = 1;
+  f2 = 0;
+  integer numFib;
+  integer fib;
+  fib = 1;
+  read numFib;
+  for( ; numFib > 0; numFib = numFib - 1)
+    write fib;
+    fib = f1 + f2;
+    f2 = f1;
+    f1 = fib;
   endfor;
-  write i;
-  while(x > 0)
-    write 3;
-    x = x - 1;
-  endwhile;
-  if(z == 9)
-    write 10;
-  endif;
 END;
